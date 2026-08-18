@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react'
-import { Trophy, Medal, Award, Flame, Search, Crown, Users, Calendar, Sparkles } from 'lucide-react'
+import { Trophy, Medal, Award, Crown, Search } from 'lucide-react'
 import { LeaderboardItem, TimeRange } from '../types'
 import { useAuth } from '../context/AuthContext'
 
@@ -30,11 +30,8 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
   const totalStats = useMemo(() => {
     const totalPoints = items.reduce((sum, item) => sum + item.totalPoints, 0)
     const totalAmount = items.reduce((sum, item) => sum + item.totalAmount, 0)
-    const totalOppAmount = items.reduce((sum, item) => sum + item.oppAmount, 0)
-    const activeMembers = items.filter((item) => item.totalPoints > 0).length
     const topPerformer = items[0]?.name || '-'
-    const topPoints = items[0]?.totalPoints || 0
-    return { totalPoints, totalAmount, totalOppAmount, activeMembers, topPerformer, topPoints }
+    return { totalPoints, totalAmount, topPerformer }
   }, [items])
 
   // 前三名
@@ -47,38 +44,42 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
 
   return (
     <div className="leaderboard-card">
-      {/* Tab Switcher and Search */}
+      {/* 顶部控制栏：Tab + 搜索 */}
       <div className="leaderboard-nav">
         <div className="tab-group">
           <button
             className={`tab-btn ${timeRange === 'all' ? 'active' : ''}`}
             onClick={() => onChangeTimeRange('all')}
           >
-            <Trophy size={16} />
-            <span>累计总榜</span>
+            总榜
           </button>
           <button
             className={`tab-btn ${timeRange === 'month' ? 'active' : ''}`}
             onClick={() => onChangeTimeRange('month')}
           >
-            <Calendar size={16} />
-            <span>本月榜</span>
+            月榜
           </button>
           <button
             className={`tab-btn ${timeRange === 'week' ? 'active' : ''}`}
             onClick={() => onChangeTimeRange('week')}
           >
-            <Flame size={16} />
-            <span>本周榜</span>
+            周榜
           </button>
         </div>
 
-        {/* Search input */}
+        {/* 简洁汇总指示 */}
+        <div className="compact-stats-pill">
+          <span>总积分：<strong>{totalStats.totalPoints}</strong></span>
+          <span className="dot-sep">·</span>
+          <span>总人数：<strong>{totalStats.totalAmount}</strong></span>
+        </div>
+
+        {/* 搜索 */}
         <div className="search-box">
-          <Search size={16} className="search-icon" />
+          <Search size={14} className="search-icon" />
           <input
             type="text"
-            placeholder="搜索员工姓名..."
+            placeholder="搜索姓名..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="search-input"
@@ -91,196 +92,98 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
         </div>
       </div>
 
-      {/* KPI Summary Banner */}
-      <div className="kpi-banner">
-        <div className="kpi-item">
-          <div className="kpi-icon-box gold">
-            <Sparkles size={18} />
-          </div>
-          <div>
-            <span className="kpi-label">
-              {timeRange === 'all' ? '累计总积分' : timeRange === 'month' ? '本月总积分' : '本周总积分'}
-            </span>
-            <div className="kpi-value text-gold">
-              {totalStats.totalPoints.toLocaleString()} <span className="kpi-unit">分</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="kpi-item">
-          <div className="kpi-icon-box blue">
-            <Users size={18} />
-          </div>
-          <div>
-            <span className="kpi-label">登记总人数</span>
-            <div className="kpi-value">
-              {totalStats.totalAmount.toLocaleString()} <span className="kpi-unit">人</span>
-              {totalStats.totalOppAmount > 0 && (
-                <span className="opp-tag-kpi">
-                  🔥 OPP {totalStats.totalOppAmount}人
-                </span>
-              )}
-            </div>
-          </div>
-        </div>
-
-        <div className="kpi-item">
-          <div className="kpi-icon-box green">
-            <Crown size={18} />
-          </div>
-          <div>
-            <span className="kpi-label">当前榜首冠军</span>
-            <div className="kpi-value text-gold">
-              {totalStats.topPerformer} {totalStats.topPoints > 0 && <small className="kpi-unit">({totalStats.topPoints}分)</small>}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Rules Notice Badge */}
-      <div className="points-rule-notice">
-        <span className="rule-badge">计分规则</span>
-        <span>🔹 普通登记：<strong>1人 = 8分</strong></span>
-        <span className="rule-divider">·</span>
-        <span>🔥 OPP 专场：<strong>1人 = 10分</strong> (享 25% 积分加成)</span>
-      </div>
-
-      {/* Loading state */}
+      {/* Loading */}
       {loading && (
         <div className="leaderboard-loading">
           <div className="skeleton-podium"></div>
-          <div className="skeleton-list">
-            <div className="skeleton-row"></div>
-            <div className="skeleton-row"></div>
-            <div className="skeleton-row"></div>
-          </div>
+          <div className="skeleton-row"></div>
+          <div className="skeleton-row"></div>
         </div>
       )}
 
+      {/* 空状态 */}
       {!loading && items.length === 0 && (
         <div className="empty-leaderboard">
-          <div className="empty-icon-wrap">
-            <Trophy size={48} className="empty-icon" />
-          </div>
-          <h3 className="empty-title">暂无登记数据</h3>
-          <p className="empty-desc">
-            {timeRange === 'week' ? '本周还没有员工登记人数与积分，快来抢占第一名吧！' :
-             timeRange === 'month' ? '本月还没有员工登记人数与积分，快来抢占第一名吧！' :
-             '还没有任何登记记录，立即在上方登记人数与积分！'}
-          </p>
+          <Trophy size={40} className="empty-icon" />
+          <p className="empty-title">暂无登记数据</p>
         </div>
       )}
 
-      {/* Top 3 Podium */}
+      {/* 极简前三名领奖台 */}
       {!loading && !searchQuery && items.length > 0 && (
         <div className="podium-container">
-          {/* Top 2 (Silver) */}
+          {/* 亚军 2nd */}
           <div className={`podium-item silver ${top2 ? 'has-user' : 'empty'}`}>
             {top2 ? (
               <>
-                <div className="podium-avatar-wrapper">
-                  <div className="podium-badge silver">2</div>
-                  <div className="podium-avatar silver-glow">
-                    {top2.name.slice(0, 1)}
-                  </div>
+                <div className="podium-avatar silver">
+                  {top2.name.slice(0, 1)}
+                  <span className="rank-tag silver">2</span>
                 </div>
                 <div className="podium-name" title={top2.name}>{top2.name}</div>
-                <div className="podium-score">
-                  <span className="score-num">{top2.totalPoints}</span>
-                  <span className="score-unit">分</span>
-                </div>
-                <div className="podium-people-sub">
-                  共 {top2.totalAmount} 人 
-                  {top2.oppAmount > 0 && <span className="podium-opp-pill">🔥{top2.oppAmount}</span>}
-                </div>
+                <div className="podium-score">{top2.totalPoints} <small>分</small></div>
+                <div className="podium-sub">{top2.totalAmount} 人</div>
                 <div className="podium-stand silver-stand">
-                  <Medal size={22} className="stand-icon silver-icon" />
-                  <span className="stand-label">亚军</span>
+                  <Medal size={18} className="stand-icon" />
                 </div>
               </>
             ) : (
-              <div className="podium-stand silver-stand empty-stand">
-                <span className="stand-label">虚位以待</span>
-              </div>
+              <div className="podium-stand silver-stand empty-stand"></div>
             )}
           </div>
 
-          {/* Top 1 (Gold) */}
+          {/* 冠军 1st */}
           <div className={`podium-item gold ${top1 ? 'has-user' : 'empty'}`}>
             {top1 ? (
               <>
-                <div className="crown-badge">
-                  <Crown size={28} className="crown-icon" />
-                </div>
-                <div className="podium-avatar-wrapper">
-                  <div className="podium-badge gold">1</div>
-                  <div className="podium-avatar gold-glow">
-                    {top1.name.slice(0, 1)}
-                  </div>
+                <Crown size={22} className="crown-icon-clean" />
+                <div className="podium-avatar gold">
+                  {top1.name.slice(0, 1)}
+                  <span className="rank-tag gold">1</span>
                 </div>
                 <div className="podium-name" title={top1.name}>{top1.name}</div>
-                <div className="podium-score gold-text">
-                  <span className="score-num">{top1.totalPoints}</span>
-                  <span className="score-unit">分</span>
-                </div>
-                <div className="podium-people-sub">
-                  共 {top1.totalAmount} 人 
-                  {top1.oppAmount > 0 && <span className="podium-opp-pill">🔥OPP {top1.oppAmount}人</span>}
-                </div>
+                <div className="podium-score gold">{top1.totalPoints} <small>分</small></div>
+                <div className="podium-sub">{top1.totalAmount} 人</div>
                 <div className="podium-stand gold-stand">
-                  <Trophy size={24} className="stand-icon gold-icon" />
-                  <span className="stand-label">冠军</span>
+                  <Trophy size={20} className="stand-icon" />
                 </div>
               </>
             ) : (
-              <div className="podium-stand gold-stand empty-stand">
-                <span className="stand-label">虚位以待</span>
-              </div>
+              <div className="podium-stand gold-stand empty-stand"></div>
             )}
           </div>
 
-          {/* Top 3 (Bronze) */}
+          {/* 季军 3rd */}
           <div className={`podium-item bronze ${top3 ? 'has-user' : 'empty'}`}>
             {top3 ? (
               <>
-                <div className="podium-avatar-wrapper">
-                  <div className="podium-badge bronze">3</div>
-                  <div className="podium-avatar bronze-glow">
-                    {top3.name.slice(0, 1)}
-                  </div>
+                <div className="podium-avatar bronze">
+                  {top3.name.slice(0, 1)}
+                  <span className="rank-tag bronze">3</span>
                 </div>
                 <div className="podium-name" title={top3.name}>{top3.name}</div>
-                <div className="podium-score">
-                  <span className="score-num">{top3.totalPoints}</span>
-                  <span className="score-unit">分</span>
-                </div>
-                <div className="podium-people-sub">
-                  共 {top3.totalAmount} 人
-                  {top3.oppAmount > 0 && <span className="podium-opp-pill">🔥{top3.oppAmount}</span>}
-                </div>
+                <div className="podium-score">{top3.totalPoints} <small>分</small></div>
+                <div className="podium-sub">{top3.totalAmount} 人</div>
                 <div className="podium-stand bronze-stand">
-                  <Award size={22} className="stand-icon bronze-icon" />
-                  <span className="stand-label">季军</span>
+                  <Award size={18} className="stand-icon" />
                 </div>
               </>
             ) : (
-              <div className="podium-stand bronze-stand empty-stand">
-                <span className="stand-label">虚位以待</span>
-              </div>
+              <div className="podium-stand bronze-stand empty-stand"></div>
             )}
           </div>
         </div>
       )}
 
-      {/* Rankings List */}
+      {/* 极简排名列表 */}
       {!loading && filteredItems.length > 0 && (
         <div className="ranking-table-container">
           <div className="ranking-table-header">
             <span className="th-rank">排名</span>
             <span className="th-name">员工</span>
-            <span className="th-progress">积分比重</span>
-            <span className="th-breakdown">人数构成 (普通/OPP)</span>
-            <span className="th-amount">总积分</span>
+            <span className="th-progress">进度</span>
+            <span className="th-people">人数</span>
+            <span className="th-amount">积分</span>
           </div>
 
           <div className="ranking-list">
@@ -293,29 +196,18 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
                   key={item.userId}
                   className={`ranking-row ${isCurrentUser ? 'current-user-row' : ''}`}
                 >
-                  {/* Rank */}
                   <div className="td-rank">
-                    <span className={`rank-number rank-${item.rank}`}>
-                      {item.rank <= 3 ? (
-                        item.rank === 1 ? '🥇' : item.rank === 2 ? '🥈' : '🥉'
-                      ) : (
-                        `#${item.rank}`
-                      )}
-                    </span>
+                    <span className="rank-num">#{item.rank}</span>
                   </div>
 
-                  {/* User */}
                   <div className="td-name">
                     <div className="avatar-circle">
                       {item.name.slice(0, 1)}
                     </div>
-                    <div className="name-box">
-                      <span className="employee-name">{item.name}</span>
-                      {isCurrentUser && <span className="me-tag">我</span>}
-                    </div>
+                    <span className="employee-name">{item.name}</span>
+                    {isCurrentUser && <span className="me-tag">我</span>}
                   </div>
 
-                  {/* Points Progress */}
                   <div className="td-progress">
                     <div className="progress-bar-bg">
                       <div
@@ -325,27 +217,16 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
                     </div>
                   </div>
 
-                  {/* People Breakdown */}
-                  <div className="td-breakdown">
-                    <span className="breakdown-total">共 {item.totalAmount} 人</span>
-                    <div className="breakdown-pills">
-                      {item.standardAmount > 0 && (
-                        <span className="breakdown-pill blue">
-                          普 {item.standardAmount}
-                        </span>
-                      )}
-                      {item.oppAmount > 0 && (
-                        <span className="breakdown-pill flame">
-                          🔥OPP {item.oppAmount}
-                        </span>
-                      )}
-                    </div>
+                  <div className="td-people">
+                    <span className="people-count">{item.totalAmount} 人</span>
+                    {item.oppAmount > 0 && (
+                      <span className="opp-count-tag">OPP {item.oppAmount}</span>
+                    )}
                   </div>
 
-                  {/* Total Points */}
                   <div className="td-amount">
                     <span className="points-num">{item.totalPoints}</span>
-                    <span className="points-unit"> 分</span>
+                    <span className="points-unit">分</span>
                   </div>
                 </div>
               )

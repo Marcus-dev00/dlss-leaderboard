@@ -15,7 +15,6 @@ export const App: React.FC = () => {
   const [timeRange, setTimeRange] = useState<TimeRange>('all')
   const [leaderboardItems, setLeaderboardItems] = useState<LeaderboardItem[]>([])
   const [loadingData, setLoadingData] = useState<boolean>(true)
-  const [isRealtimeActive, setIsRealtimeActive] = useState<boolean>(false)
   const [isHistoryOpen, setIsHistoryOpen] = useState<boolean>(false)
 
   const submitSectionRef = useRef<HTMLDivElement>(null)
@@ -57,7 +56,7 @@ export const App: React.FC = () => {
 
       const submissions = (submissionsData || []) as Submission[]
 
-      // 3. 内存聚合（总积分、总人数、普通人数、OPP人数、提交次数）
+      // 3. 内存聚合
       const statsMap = new Map<string, {
         totalPoints: number
         totalAmount: number
@@ -111,7 +110,7 @@ export const App: React.FC = () => {
         })
       })
 
-      // 4. 生成排行榜列表并按【总积分】倒序排列
+      // 4. 生成排行榜列表并按总积分倒序排列
       const rawList: LeaderboardItem[] = []
 
       statsMap.forEach((stats, userId) => {
@@ -177,28 +176,11 @@ export const App: React.FC = () => {
           schema: 'public',
           table: 'submissions'
         },
-        (_payload) => {
+        () => {
           fetchLeaderboardData()
         }
       )
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'profiles'
-        },
-        (_payload) => {
-          fetchLeaderboardData()
-        }
-      )
-      .subscribe((status) => {
-        if (status === 'SUBSCRIBED') {
-          setIsRealtimeActive(true)
-        } else if (status === 'CLOSED' || status === 'CHANNEL_ERROR') {
-          setIsRealtimeActive(false)
-        }
-      })
+      .subscribe()
 
     return () => {
       supabase.removeChannel(channel)
@@ -211,56 +193,37 @@ export const App: React.FC = () => {
     input?.focus()
   }
 
-  // 1. 如果还在检查登录状态
+  // 1. 加载中
   if (authLoading) {
     return (
       <div className="splash-screen">
         <div className="splash-card">
           <div className="splash-spinner"></div>
-          <p className="splash-text">正在加载系统...</p>
+          <p className="splash-text">加载中...</p>
         </div>
       </div>
     )
   }
 
-  // 2. 如果未登录，直接显示全屏登录 / 注册欢迎页
+  // 2. 未登录 -> 显示极简登录页
   if (!user || !profile) {
     return <LoginPage />
   }
 
-  // 3. 已登录，渲染主界面
+  // 3. 已登录主界面
   return (
     <div className="app-container">
-      {/* Top Header */}
-      <Header
-        onOpenHistory={() => setIsHistoryOpen(true)}
-        onOpenAuth={() => {}}
-        isRealtimeActive={isRealtimeActive}
-      />
+      {/* 极简顶栏 */}
+      <Header onOpenHistory={() => setIsHistoryOpen(true)} />
 
-      {/* Main Page Body */}
+      {/* 主内容区域 */}
       <main className="main-content">
-        {/* Welcome Banner */}
-        <div className="dashboard-hero">
-          <div className="hero-text">
-            <h2 className="hero-title">
-              👋 欢迎回来，<span className="hero-name">{profile.name}</span>！
-            </h2>
-            <p className="hero-subtitle">
-              今日继续加油！普通登记 8分/人，OPP专场 10分/人，冲刺榜首 🚀
-            </p>
-          </div>
-        </div>
-
-        {/* Quick Submit Form Card */}
+        {/* 极简快速提交区 */}
         <div ref={submitSectionRef}>
-          <SubmitCard
-            onSubmitted={fetchLeaderboardData}
-            onOpenAuth={() => {}}
-          />
+          <SubmitCard onSubmitted={fetchLeaderboardData} />
         </div>
 
-        {/* Dynamic Leaderboard (All-time / Month / Week) */}
+        {/* 极简排行榜 */}
         <Leaderboard
           items={leaderboardItems}
           timeRange={timeRange}
@@ -269,14 +232,14 @@ export const App: React.FC = () => {
         />
       </main>
 
-      {/* Persistent Bottom User Stats Bar */}
+      {/* 底部极简战绩栏 */}
       <UserStatsBar
         items={leaderboardItems}
         timeRange={timeRange}
         onFocusSubmit={handleFocusSubmit}
       />
 
-      {/* History Modal */}
+      {/* 历史明细弹窗 */}
       <HistoryModal
         isOpen={isHistoryOpen}
         onClose={() => setIsHistoryOpen(false)}

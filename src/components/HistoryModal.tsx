@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { X, Calendar, Trash2, Clock, CheckCircle, AlertCircle, Flame, Users } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
+import { useLanguage } from '../context/LanguageContext'
 import { supabase } from '../lib/supabase'
 import { Submission } from '../types'
 import { formatTime } from '../lib/dateUtils'
@@ -13,6 +14,7 @@ interface HistoryModalProps {
 
 export const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose, onRecordDeleted }) => {
   const { user, profile } = useAuth()
+  const { t } = useLanguage()
   const [submissions, setSubmissions] = useState<Submission[]>([])
   const [loading, setLoading] = useState<boolean>(false)
   const [deletingId, setDeletingId] = useState<string | null>(null)
@@ -46,8 +48,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose, onR
   }, [isOpen, user])
 
   const handleDelete = async (sub: Submission) => {
-    const points = sub.points || (sub.amount * (sub.type === 'opp' ? 10 : 8))
-    if (!window.confirm(`确定要撤销这笔登记（${sub.amount}人 / ${points}分）吗？撤销后排行榜将重新统计。`)) {
+    if (!window.confirm(t.confirmDelete)) {
       return
     }
 
@@ -60,14 +61,14 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose, onR
         .eq('id', sub.id)
 
       if (error) {
-        setFeedback({ type: 'error', message: `删除失败: ${error.message}` })
+        setFeedback({ type: 'error', message: `${error.message}` })
       } else {
-        setFeedback({ type: 'success', message: '已成功撤销该条提交记录' })
+        setFeedback({ type: 'success', message: 'Record deleted' })
         setSubmissions((prev) => prev.filter((item) => item.id !== sub.id))
         onRecordDeleted()
       }
     } catch (e: any) {
-      setFeedback({ type: 'error', message: e?.message || '操作异常' })
+      setFeedback({ type: 'error', message: e?.message || 'Error' })
     } finally {
       setDeletingId(null)
     }
@@ -89,17 +90,17 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose, onR
           <div className="modal-title-box">
             <Calendar className="modal-icon" />
             <div>
-              <h2 className="modal-title">{profile?.name} 的提交明细流水</h2>
+              <h2 className="modal-title">{profile?.name} - {t.historyTitle}</h2>
               <div className="modal-stats-subtitle">
-                <span>共 {submissions.length} 次登记</span>
+                <span>{t.recordsCount(submissions.length)}</span>
                 <span>·</span>
-                <span className="text-gold">累计 {totalPoints} 积分</span>
+                <span>{totalPoints} {t.pointsUnit}</span>
                 <span>·</span>
-                <span>{totalPeople} 人</span>
+                <span>{totalPeople} {t.paxUnit}</span>
               </div>
             </div>
           </div>
-          <button className="modal-close-btn" onClick={onClose} aria-label="关闭">
+          <button className="modal-close-btn" onClick={onClose} aria-label={t.btnClose}>
             <X size={20} />
           </button>
         </div>
@@ -117,12 +118,11 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose, onR
           {loading ? (
             <div className="history-loading">
               <div className="loading-spinner"></div>
-              <span>加载中...</span>
             </div>
           ) : submissions.length === 0 ? (
             <div className="history-empty">
               <Clock size={40} className="empty-history-icon" />
-              <p>您还没有任何提交记录</p>
+              <p>{t.noHistory}</p>
             </div>
           ) : (
             <div className="history-list">
@@ -134,15 +134,15 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose, onR
                   <div key={sub.id} className="history-item">
                     <div className="history-item-left">
                       <div className="history-score-col">
-                        <span className="history-points">+{points} <small>分</small></span>
-                        <span className="history-amount-sub">({sub.amount}人)</span>
+                        <span className="history-points">+{points} <small>{t.pointsUnit}</small></span>
+                        <span className="history-amount-sub">({sub.amount}{t.paxUnit})</span>
                       </div>
 
                       <div className="history-meta">
                         <div className="history-type-row">
                           <span className={`channel-pill ${isOpp ? 'flame' : 'blue'}`}>
                             {isOpp ? <Flame size={12} /> : <Users size={12} />}
-                            {isOpp ? 'OPP 专场 (10分/人)' : '普通渠道 (8分/人)'}
+                            {isOpp ? 'OPP' : 'Standard'}
                           </span>
                           <span className="history-time">{formatTime(sub.created_at)}</span>
                         </div>
@@ -154,7 +154,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose, onR
                       className="btn-delete-record"
                       onClick={() => handleDelete(sub)}
                       disabled={deletingId === sub.id}
-                      title="撤销此条记录"
+                      title="Delete"
                     >
                       {deletingId === sub.id ? (
                         <span className="mini-spinner"></span>
@@ -172,7 +172,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose, onR
         {/* Footer */}
         <div className="modal-footer">
           <button className="btn-secondary" onClick={onClose}>
-            关闭
+            {t.btnClose}
           </button>
         </div>
       </div>

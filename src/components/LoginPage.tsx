@@ -1,9 +1,12 @@
 import React, { useState } from 'react'
 import { Trophy, Lock, User, Eye, EyeOff, ArrowRight } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
+import { useLanguage } from '../context/LanguageContext'
+import { LanguageSwitcher } from './LanguageSwitcher'
 
 export const LoginPage: React.FC = () => {
   const { login } = useAuth()
+  const { t } = useLanguage()
   const [name, setName] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -17,11 +20,11 @@ export const LoginPage: React.FC = () => {
 
     const trimmed = name.trim()
     if (!trimmed) {
-      setErrorMessage('请输入姓名')
+      setErrorMessage(t.nameRequired)
       return
     }
     if (!password || password.length < 6) {
-      setErrorMessage('密码至少 6 位')
+      setErrorMessage(t.pwdRequired)
       return
     }
 
@@ -30,12 +33,17 @@ export const LoginPage: React.FC = () => {
     setLoading(false)
 
     if (!res.success) {
-      setErrorMessage(res.error || '登录失败，请重试')
+      setErrorMessage(res.error || 'Failed to authenticate')
     }
   }
 
   return (
     <div className="login-screen">
+      {/* 顶部语言切换 */}
+      <div className="login-top-lang">
+        <LanguageSwitcher />
+      </div>
+
       <div className="login-centered-card">
         {/* Brand */}
         <div className="login-header-simple">
@@ -43,10 +51,10 @@ export const LoginPage: React.FC = () => {
             <Trophy className="login-logo-icon" />
           </div>
           <div className="login-brand-group">
-            <h1 className="login-brand-name">DLSS</h1>
-            <p className="login-studio-sub">Diamond Life Style Studio</p>
+            <h1 className="login-brand-name">{t.brandName}</h1>
+            <p className="login-studio-sub">{t.studioName}</p>
           </div>
-          <div className="login-badge-pill">人数排行榜</div>
+          <div className="login-badge-pill">{t.leaderboardTitle}</div>
         </div>
 
         {/* Tab switch */}
@@ -56,14 +64,14 @@ export const LoginPage: React.FC = () => {
             className={`auth-tab-btn ${activeTab === 'login' ? 'active' : ''}`}
             onClick={() => { setActiveTab('login'); setErrorMessage(null); }}
           >
-            员工登录
+            {t.loginTab}
           </button>
           <button
             type="button"
             className={`auth-tab-btn ${activeTab === 'register' ? 'active' : ''}`}
             onClick={() => { setActiveTab('register'); setErrorMessage(null); }}
           >
-            首次注册
+            {t.registerTab}
           </button>
         </div>
 
@@ -76,14 +84,14 @@ export const LoginPage: React.FC = () => {
         <form onSubmit={handleSubmit} className="login-form">
           <div className="form-field">
             <label htmlFor="login-name" className="input-label">
-              员工姓名
+              {t.nameLabel}
             </label>
             <div className="input-box">
               <User size={18} className="field-icon" />
               <input
                 id="login-name"
                 type="text"
-                placeholder="输入姓名"
+                placeholder={t.namePlaceholder}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
@@ -97,16 +105,16 @@ export const LoginPage: React.FC = () => {
           <div className="form-field">
             <div className="label-row">
               <label htmlFor="login-pwd" className="input-label">
-                登录密码
+                {t.pwdLabel}
               </label>
-              <span className="pwd-hint">不少于 6 位</span>
+              <span className="pwd-hint">{t.pwdHint}</span>
             </div>
             <div className="input-box">
               <Lock size={18} className="field-icon" />
               <input
                 id="login-pwd"
                 type={showPassword ? 'text' : 'password'}
-                placeholder="输入密码"
+                placeholder={t.pwdPlaceholder}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -134,7 +142,7 @@ export const LoginPage: React.FC = () => {
               <span className="loading-spinner"></span>
             ) : (
               <>
-                <span>{activeTab === 'login' ? '登录' : '注册并进入'}</span>
+                <span>{activeTab === 'login' ? t.btnLogin : t.btnRegister}</span>
                 <ArrowRight size={16} />
               </>
             )}

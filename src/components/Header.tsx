@@ -1,6 +1,8 @@
 import React from 'react'
 import { Trophy, LogOut, History } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
+import { useLanguage } from '../context/LanguageContext'
+import { LanguageSwitcher } from './LanguageSwitcher'
 
 interface HeaderProps {
   onOpenHistory: () => void
@@ -8,6 +10,7 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ onOpenHistory }) => {
   const { profile, logout } = useAuth()
+  const { t } = useLanguage()
 
   return (
     <header className="header">
@@ -19,43 +22,47 @@ export const Header: React.FC<HeaderProps> = ({ onOpenHistory }) => {
           </div>
           <div className="brand-text-col">
             <div className="brand-title-row">
-              <span className="brand-company">DLSS</span>
+              <span className="brand-company">{t.brandName}</span>
               <span className="brand-sep">·</span>
-              <h1 className="brand-title">人数排行榜</h1>
+              <h1 className="brand-title">{t.leaderboardTitle}</h1>
             </div>
-            <span className="brand-studio-sub">Diamond Life Style Studio</span>
+            <span className="brand-studio-sub">{t.studioName}</span>
           </div>
         </div>
 
-        {/* User Actions */}
-        {profile && (
-          <div className="header-actions">
-            <div className="user-badge" title={`已登录：${profile.name}`}>
-              <div className="user-avatar">
-                {profile.name.slice(0, 1)}
+        {/* User Actions & Language Switcher */}
+        <div className="header-actions">
+          <LanguageSwitcher compact />
+
+          {profile && (
+            <>
+              <div className="user-badge" title={profile.name}>
+                <div className="user-avatar">
+                  {profile.name.slice(0, 1)}
+                </div>
+                <span className="user-name">{profile.name}</span>
               </div>
-              <span className="user-name">{profile.name}</span>
-            </div>
 
-            <button 
-              className="btn-header-action" 
-              onClick={onOpenHistory}
-              title="查看提交明细"
-            >
-              <History size={15} />
-              <span>历史</span>
-            </button>
+              <button 
+                className="btn-header-action" 
+                onClick={onOpenHistory}
+                title={t.history}
+              >
+                <History size={15} />
+                <span>{t.history}</span>
+              </button>
 
-            <button 
-              className="btn-header-action danger" 
-              onClick={logout}
-              title="退出登录"
-            >
-              <LogOut size={15} />
-              <span>退出</span>
-            </button>
-          </div>
-        )}
+              <button 
+                className="btn-header-action danger" 
+                onClick={logout}
+                title={t.logout}
+              >
+                <LogOut size={15} />
+                <span>{t.logout}</span>
+              </button>
+            </>
+          )}
+        </div>
       </div>
     </header>
   )

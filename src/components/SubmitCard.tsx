@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Plus, Minus, Send, CheckCircle2, AlertCircle, Users, Flame } from 'lucide-react'
 import confetti from 'canvas-confetti'
 import { useAuth } from '../context/AuthContext'
+import { useLanguage } from '../context/LanguageContext'
 import { supabase } from '../lib/supabase'
 import { SubmissionType } from '../types'
 
@@ -11,6 +12,7 @@ interface SubmitCardProps {
 
 export const SubmitCard: React.FC<SubmitCardProps> = ({ onSubmitted }) => {
   const { user } = useAuth()
+  const { t } = useLanguage()
   const [submissionType, setSubmissionType] = useState<SubmissionType>('standard')
   const [amount, setAmount] = useState<number>(1)
   const [note, setNote] = useState<string>('')
@@ -26,7 +28,7 @@ export const SubmitCard: React.FC<SubmitCardProps> = ({ onSubmitted }) => {
     if (!user) return
 
     if (amount <= 0 || !Number.isInteger(amount)) {
-      setFeedback({ type: 'error', message: '请输入大于 0 的有效人数' })
+      setFeedback({ type: 'error', message: t.invalidAmount })
       return
     }
 
@@ -43,7 +45,7 @@ export const SubmitCard: React.FC<SubmitCardProps> = ({ onSubmitted }) => {
       })
 
       if (error) {
-        setFeedback({ type: 'error', message: `提交失败: ${error.message}` })
+        setFeedback({ type: 'error', message: `${t.submitFail}: ${error.message}` })
       } else {
         try {
           confetti({
@@ -57,7 +59,7 @@ export const SubmitCard: React.FC<SubmitCardProps> = ({ onSubmitted }) => {
 
         setFeedback({ 
           type: 'success', 
-          message: `登记成功！${amount} 人 (+${calculatedPoints} 分)` 
+          message: t.submitSuccess(amount, calculatedPoints)
         })
         setAmount(1)
         setNote('')
@@ -66,7 +68,7 @@ export const SubmitCard: React.FC<SubmitCardProps> = ({ onSubmitted }) => {
         setTimeout(() => setFeedback(null), 3000)
       }
     } catch (err: any) {
-      setFeedback({ type: 'error', message: err?.message || '网络异常' })
+      setFeedback({ type: 'error', message: err?.message || t.submitFail })
     } finally {
       setSubmitting(false)
     }
@@ -75,7 +77,7 @@ export const SubmitCard: React.FC<SubmitCardProps> = ({ onSubmitted }) => {
   return (
     <div className="submit-card">
       <div className="submit-card-header">
-        <h2 className="submit-card-title">登记人数</h2>
+        <h2 className="submit-card-title">{t.submitTitle}</h2>
       </div>
 
       {feedback && (
@@ -94,7 +96,7 @@ export const SubmitCard: React.FC<SubmitCardProps> = ({ onSubmitted }) => {
             onClick={() => setSubmissionType('standard')}
           >
             <Users size={16} />
-            <span>普通登记 (8分/人)</span>
+            <span>{t.standardChannel}</span>
           </button>
 
           <button
@@ -103,7 +105,7 @@ export const SubmitCard: React.FC<SubmitCardProps> = ({ onSubmitted }) => {
             onClick={() => setSubmissionType('opp')}
           >
             <Flame size={16} />
-            <span>OPP 专场 (10分/人)</span>
+            <span>{t.oppChannel}</span>
           </button>
         </div>
 
@@ -115,7 +117,7 @@ export const SubmitCard: React.FC<SubmitCardProps> = ({ onSubmitted }) => {
               className="stepper-btn-large"
               onClick={() => setAmount((prev) => Math.max(1, prev - 1))}
               disabled={amount <= 1 || submitting}
-              aria-label="减少1人"
+              aria-label="Decrease"
             >
               <Minus size={20} />
             </button>
@@ -131,14 +133,14 @@ export const SubmitCard: React.FC<SubmitCardProps> = ({ onSubmitted }) => {
                 required
                 disabled={submitting}
               />
-              <span className="unit-label">人</span>
+              <span className="unit-label">{t.paxUnit}</span>
             </div>
             <button
               type="button"
               className="stepper-btn-large"
               onClick={() => setAmount((prev) => prev + 1)}
               disabled={submitting}
-              aria-label="增加1人"
+              aria-label="Increase"
             >
               <Plus size={20} />
             </button>
@@ -146,10 +148,10 @@ export const SubmitCard: React.FC<SubmitCardProps> = ({ onSubmitted }) => {
 
           {/* 大号醒目积分卡片 */}
           <div className="points-display-card">
-            <span className="points-display-label">本次获得</span>
+            <span className="points-display-label">{t.earnedPoints}</span>
             <div className="points-display-val">
               <span className="calc-text">+{calculatedPoints}</span>
-              <span className="calc-unit">积分</span>
+              <span className="calc-unit">{t.pointsUnit}</span>
             </div>
           </div>
         </div>
@@ -159,7 +161,7 @@ export const SubmitCard: React.FC<SubmitCardProps> = ({ onSubmitted }) => {
           <input
             id="note-input"
             type="text"
-            placeholder="填写备注（可选）"
+            placeholder={t.notePlaceholder}
             value={note}
             onChange={(e) => setNote(e.target.value)}
             className="note-input-spacious"
@@ -177,7 +179,7 @@ export const SubmitCard: React.FC<SubmitCardProps> = ({ onSubmitted }) => {
             ) : (
               <>
                 <Send size={16} />
-                <span>确认提交 (+{calculatedPoints}分)</span>
+                <span>{t.btnSubmit} (+{calculatedPoints}{t.pointsUnit})</span>
               </>
             )}
           </button>

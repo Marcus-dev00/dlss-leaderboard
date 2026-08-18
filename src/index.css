@@ -1,5 +1,6 @@
 /* ==========================================================================
    DLSS 人数登记排行榜 - 旗舰极简暖色设计系统 (Spacious & Clean UI)
+   包含中 / 英 / 马来语 多语言切换
    ========================================================================== */
 
 :root {
@@ -71,6 +72,52 @@ body {
 }
 
 /* ==========================================================================
+   语言切换器 (Language Switcher)
+   ========================================================================== */
+
+.language-switcher {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  padding: 3px 6px 3px 8px;
+}
+
+.lang-icon {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.lang-buttons {
+  display: flex;
+  gap: 2px;
+}
+
+.lang-btn {
+  background: none;
+  border: none;
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.lang-btn:hover {
+  color: var(--text-main);
+}
+
+.lang-btn.active {
+  background: var(--primary);
+  color: #ffffff;
+  box-shadow: 0 1px 4px rgba(194, 65, 12, 0.25);
+}
+
+/* ==========================================================================
    1. 极简居中单卡片登录 (LoginPage) - DLSS 品牌
    ========================================================================== */
 
@@ -80,6 +127,14 @@ body {
   align-items: center;
   justify-content: center;
   padding: 24px;
+  position: relative;
+}
+
+.login-top-lang {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  z-index: 10;
 }
 
 .login-centered-card {

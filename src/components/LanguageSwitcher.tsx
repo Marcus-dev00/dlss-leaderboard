@@ -17,7 +17,7 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ compact = fa
 
   return (
     <div className={`language-switcher ${compact ? 'compact' : ''}`}>
-      <Globe size={14} className="lang-icon" />
+      {!compact && <Globe size={13} className="lang-icon" />}
       <div className="lang-buttons">
         {languages.map((lang) => (
           <button

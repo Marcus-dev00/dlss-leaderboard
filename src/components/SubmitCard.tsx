@@ -12,7 +12,7 @@ interface SubmitCardProps {
 
 export const SubmitCard: React.FC<SubmitCardProps> = ({ onSubmitted }) => {
   const { user } = useAuth()
-  const { t } = useLanguage()
+  const { language, t } = useLanguage()
   const [submissionType, setSubmissionType] = useState<SubmissionType>('standard')
   const [amount, setAmount] = useState<number>(1)
   const [note, setNote] = useState<string>('')
@@ -21,6 +21,9 @@ export const SubmitCard: React.FC<SubmitCardProps> = ({ onSubmitted }) => {
 
   const pointRate = submissionType === 'opp' ? 10 : 8
   const calculatedPoints = (amount || 0) * pointRate
+
+  const standardTitle = language === 'en' ? 'Standard' : (language === 'zh' ? '普通登记' : 'Biasa')
+  const oppTitle = language === 'en' ? 'OPP Session' : (language === 'zh' ? 'OPP 专场' : 'Sesi OPP')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -88,28 +91,34 @@ export const SubmitCard: React.FC<SubmitCardProps> = ({ onSubmitted }) => {
       )}
 
       <form onSubmit={handleSubmit} className="submit-form">
-        {/* 渠道选择 */}
-        <div className="channel-switch-segment">
+        {/* 渠道双卡选择 (不折行、不溢出) */}
+        <div className="channel-toggle-grid">
           <button
             type="button"
-            className={`channel-switch-btn ${submissionType === 'standard' ? 'active' : ''}`}
+            className={`channel-option-card ${submissionType === 'standard' ? 'active' : ''}`}
             onClick={() => setSubmissionType('standard')}
           >
-            <Users size={16} />
-            <span>{t.standardChannel}</span>
+            <div className="channel-card-top">
+              <Users size={16} />
+              <span className="channel-card-title">{standardTitle}</span>
+            </div>
+            <span className="channel-card-rate">8 {t.pointsUnit} / {t.paxUnit}</span>
           </button>
 
           <button
             type="button"
-            className={`channel-switch-btn opp ${submissionType === 'opp' ? 'active' : ''}`}
+            className={`channel-option-card opp ${submissionType === 'opp' ? 'active' : ''}`}
             onClick={() => setSubmissionType('opp')}
           >
-            <Flame size={16} />
-            <span>{t.oppChannel}</span>
+            <div className="channel-card-top">
+              <Flame size={16} className="flame-icon" />
+              <span className="channel-card-title">{oppTitle}</span>
+            </div>
+            <span className="channel-card-rate">10 {t.pointsUnit} / {t.paxUnit}</span>
           </button>
         </div>
 
-        {/* 大号舒适人数输入与积分预览 */}
+        {/* 大号醒目人数步进器与积分卡片 */}
         <div className="amount-focus-area">
           <div className="stepper-wrapper-large">
             <button
@@ -146,7 +155,7 @@ export const SubmitCard: React.FC<SubmitCardProps> = ({ onSubmitted }) => {
             </button>
           </div>
 
-          {/* 大号醒目积分卡片 */}
+          {/* 积分展示卡片 */}
           <div className="points-display-card">
             <span className="points-display-label">{t.earnedPoints}</span>
             <div className="points-display-val">
@@ -156,34 +165,35 @@ export const SubmitCard: React.FC<SubmitCardProps> = ({ onSubmitted }) => {
           </div>
         </div>
 
-        {/* 备注与提交按钮 */}
-        <div className="submit-action-row">
+        {/* 宽敞高清晰备注框 */}
+        <div className="note-input-container">
           <input
             id="note-input"
             type="text"
             placeholder={t.notePlaceholder}
             value={note}
             onChange={(e) => setNote(e.target.value)}
-            className="note-input-spacious"
+            className="note-input-full"
             maxLength={40}
             disabled={submitting}
           />
-
-          <button
-            type="submit"
-            className={`btn-submit-spacious ${submissionType === 'opp' ? 'opp' : ''}`}
-            disabled={submitting}
-          >
-            {submitting ? (
-              <span className="loading-spinner"></span>
-            ) : (
-              <>
-                <Send size={16} />
-                <span>{t.btnSubmit} (+{calculatedPoints}{t.pointsUnit})</span>
-              </>
-            )}
-          </button>
         </div>
+
+        {/* 宽敞大号提交按钮 */}
+        <button
+          type="submit"
+          className={`btn-submit-full ${submissionType === 'opp' ? 'opp' : ''}`}
+          disabled={submitting}
+        >
+          {submitting ? (
+            <span className="loading-spinner"></span>
+          ) : (
+            <>
+              <Send size={16} />
+              <span>{t.btnSubmit} (+{calculatedPoints} {t.pointsUnit})</span>
+            </>
+          )}
+        </button>
       </form>
     </div>
   )

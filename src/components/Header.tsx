@@ -21,12 +21,8 @@ export const Header: React.FC<HeaderProps> = ({ onOpenHistory }) => {
             <Trophy className="brand-icon" />
           </div>
           <div className="brand-text-col">
-            <div className="brand-title-row">
-              <span className="brand-company">DLSS</span>
-              <span className="brand-sep">·</span>
-              <h1 className="brand-title">{t.leaderboardTitle}</h1>
-            </div>
-            <span className="brand-studio-sub">{t.studioName}</span>
+            <span className="brand-company">DLSS</span>
+            <span className="brand-studio-sub">Diamond Life Style Studio</span>
           </div>
         </div>
 
@@ -49,7 +45,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenHistory }) => {
                 title={t.history}
                 aria-label={t.history}
               >
-                <History size={16} />
+                <History size={15} />
                 <span className="header-btn-label">{t.history}</span>
               </button>
 
@@ -59,7 +55,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenHistory }) => {
                 title={t.logout}
                 aria-label={t.logout}
               >
-                <LogOut size={16} />
+                <LogOut size={15} />
                 <span className="header-btn-label">{t.logout}</span>
               </button>
             </>

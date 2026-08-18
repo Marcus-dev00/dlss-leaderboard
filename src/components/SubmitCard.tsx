@@ -26,7 +26,7 @@ export const SubmitCard: React.FC<SubmitCardProps> = ({ onSubmitted }) => {
     if (!user) return
 
     if (amount <= 0 || !Number.isInteger(amount)) {
-      setFeedback({ type: 'error', message: '请输入有效人数' })
+      setFeedback({ type: 'error', message: '请输入大于 0 的有效人数' })
       return
     }
 
@@ -57,7 +57,7 @@ export const SubmitCard: React.FC<SubmitCardProps> = ({ onSubmitted }) => {
 
         setFeedback({ 
           type: 'success', 
-          message: `已登记 ${amount} 人 (+${calculatedPoints} 分)` 
+          message: `登记成功！${amount} 人 (+${calculatedPoints} 分)` 
         })
         setAmount(1)
         setNote('')
@@ -80,21 +80,21 @@ export const SubmitCard: React.FC<SubmitCardProps> = ({ onSubmitted }) => {
 
       {feedback && (
         <div className={`feedback-alert ${feedback.type}`}>
-          {feedback.type === 'success' ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}
+          {feedback.type === 'success' ? <CheckCircle2 size={18} /> : <AlertCircle size={18} />}
           <span>{feedback.message}</span>
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="submit-form">
-        {/* 极简渠道切换器 */}
+        {/* 渠道选择 */}
         <div className="channel-switch-segment">
           <button
             type="button"
             className={`channel-switch-btn ${submissionType === 'standard' ? 'active' : ''}`}
             onClick={() => setSubmissionType('standard')}
           >
-            <Users size={15} />
-            <span>普通 (8分/人)</span>
+            <Users size={16} />
+            <span>普通登记 (8分/人)</span>
           </button>
 
           <button
@@ -102,71 +102,82 @@ export const SubmitCard: React.FC<SubmitCardProps> = ({ onSubmitted }) => {
             className={`channel-switch-btn opp ${submissionType === 'opp' ? 'active' : ''}`}
             onClick={() => setSubmissionType('opp')}
           >
-            <Flame size={15} />
-            <span>OPP专场 (10分/人)</span>
+            <Flame size={16} />
+            <span>OPP 专场 (10分/人)</span>
           </button>
         </div>
 
-        {/* 人数步进与积分预览 */}
-        <div className="submit-input-row">
-          <div className="stepper-wrapper">
+        {/* 大号舒适人数输入与积分预览 */}
+        <div className="amount-focus-area">
+          <div className="stepper-wrapper-large">
             <button
               type="button"
-              className="stepper-btn"
+              className="stepper-btn-large"
               onClick={() => setAmount((prev) => Math.max(1, prev - 1))}
               disabled={amount <= 1 || submitting}
-              aria-label="减少"
+              aria-label="减少1人"
             >
-              <Minus size={16} />
+              <Minus size={20} />
             </button>
-            <input
-              id="amount-input"
-              type="number"
-              min="1"
-              step="1"
-              value={amount || ''}
-              onChange={(e) => setAmount(parseInt(e.target.value, 10) || 0)}
-              className="amount-input"
-              required
-              disabled={submitting}
-            />
+            <div className="amount-input-box">
+              <input
+                id="amount-input"
+                type="number"
+                min="1"
+                step="1"
+                value={amount || ''}
+                onChange={(e) => setAmount(parseInt(e.target.value, 10) || 0)}
+                className="amount-input-large"
+                required
+                disabled={submitting}
+              />
+              <span className="unit-label">人</span>
+            </div>
             <button
               type="button"
-              className="stepper-btn"
+              className="stepper-btn-large"
               onClick={() => setAmount((prev) => prev + 1)}
               disabled={submitting}
-              aria-label="增加"
+              aria-label="增加1人"
             >
-              <Plus size={16} />
+              <Plus size={20} />
             </button>
           </div>
 
-          <div className="points-inline-badge">
-            <span className="badge-text">= <strong>+{calculatedPoints}</strong> 分</span>
+          {/* 大号醒目积分卡片 */}
+          <div className="points-display-card">
+            <span className="points-display-label">本次获得</span>
+            <div className="points-display-val">
+              <span className="calc-text">+{calculatedPoints}</span>
+              <span className="calc-unit">积分</span>
+            </div>
           </div>
+        </div>
 
+        {/* 备注与提交按钮 */}
+        <div className="submit-action-row">
           <input
             id="note-input"
             type="text"
-            placeholder="备注（可选）"
+            placeholder="填写备注（可选）"
             value={note}
             onChange={(e) => setNote(e.target.value)}
-            className="note-input-compact"
-            maxLength={30}
+            className="note-input-spacious"
+            maxLength={40}
             disabled={submitting}
           />
 
           <button
             type="submit"
-            className={`btn-submit-compact ${submissionType === 'opp' ? 'opp' : ''}`}
+            className={`btn-submit-spacious ${submissionType === 'opp' ? 'opp' : ''}`}
             disabled={submitting}
           >
             {submitting ? (
               <span className="loading-spinner"></span>
             ) : (
               <>
-                <Send size={15} />
-                <span>提交</span>
+                <Send size={16} />
+                <span>确认提交 (+{calculatedPoints}分)</span>
               </>
             )}
           </button>

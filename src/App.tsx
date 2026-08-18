@@ -20,7 +20,7 @@ export const App: React.FC = () => {
 
   const submitSectionRef = useRef<HTMLDivElement>(null)
 
-  // 获取排行榜数据
+  // 获取排行榜数据与积分统计
   const fetchLeaderboardData = useCallback(async () => {
     try {
       setLoadingData(true)
@@ -57,30 +57,61 @@ export const App: React.FC = () => {
 
       const submissions = (submissionsData || []) as Submission[]
 
-      // 3. 内存聚合
-      const statsMap = new Map<string, { totalAmount: number; count: number; lastSubmittedAt: string | null }>()
+      // 3. 内存聚合（总积分、总人数、普通人数、OPP人数、提交次数）
+      const statsMap = new Map<string, {
+        totalPoints: number
+        totalAmount: number
+        standardAmount: number
+        oppAmount: number
+        count: number
+        lastSubmittedAt: string | null
+      }>()
 
-      // 先初始化所有已有员工
+      // 先初始化已有员工
       profiles.forEach((p) => {
-        statsMap.set(p.id, { totalAmount: 0, count: 0, lastSubmittedAt: null })
+        statsMap.set(p.id, {
+          totalPoints: 0,
+          totalAmount: 0,
+          standardAmount: 0,
+          oppAmount: 0,
+          count: 0,
+          lastSubmittedAt: null
+        })
       })
 
       submissions.forEach((sub) => {
-        const current = statsMap.get(sub.user_id) || { totalAmount: 0, count: 0, lastSubmittedAt: null }
-        const newTotal = current.totalAmount + sub.amount
+        const current = statsMap.get(sub.user_id) || {
+          totalPoints: 0,
+          totalAmount: 0,
+          standardAmount: 0,
+          oppAmount: 0,
+          count: 0,
+          lastSubmittedAt: null
+        }
+
+        const isOpp = sub.type === 'opp'
+        const itemPoints = sub.points || (sub.amount * (isOpp ? 10 : 8))
+
+        const newTotalPoints = current.totalPoints + itemPoints
+        const newTotalAmount = current.totalAmount + sub.amount
+        const newStandardAmount = current.standardAmount + (isOpp ? 0 : sub.amount)
+        const newOppAmount = current.oppAmount + (isOpp ? sub.amount : 0)
         const newCount = current.count + 1
         const lastSubmitted = (!current.lastSubmittedAt || new Date(sub.created_at) > new Date(current.lastSubmittedAt))
           ? sub.created_at
           : current.lastSubmittedAt
 
         statsMap.set(sub.user_id, {
-          totalAmount: newTotal,
+          totalPoints: newTotalPoints,
+          totalAmount: newTotalAmount,
+          standardAmount: newStandardAmount,
+          oppAmount: newOppAmount,
           count: newCount,
           lastSubmittedAt: lastSubmitted
         })
       })
 
-      // 4. 生成排行榜列表并按总人数倒序排列
+      // 4. 生成排行榜列表并按【总积分】倒序排列
       const rawList: LeaderboardItem[] = []
 
       statsMap.forEach((stats, userId) => {
@@ -88,15 +119,21 @@ export const App: React.FC = () => {
         rawList.push({
           userId,
           name,
+          totalPoints: stats.totalPoints,
           totalAmount: stats.totalAmount,
+          standardAmount: stats.standardAmount,
+          oppAmount: stats.oppAmount,
           submissionCount: stats.count,
           lastSubmittedAt: stats.lastSubmittedAt,
           rank: 0
         })
       })
 
-      // 排序规则：总人数倒序，相同则按提交时间靠前的优先
+      // 排序规则：总积分倒序 -> 总人数倒序 -> 提交时间
       rawList.sort((a, b) => {
+        if (b.totalPoints !== a.totalPoints) {
+          return b.totalPoints - a.totalPoints
+        }
         if (b.totalAmount !== a.totalAmount) {
           return b.totalAmount - a.totalAmount
         }
@@ -210,7 +247,7 @@ export const App: React.FC = () => {
               👋 欢迎回来，<span className="hero-name">{profile.name}</span>！
             </h2>
             <p className="hero-subtitle">
-              今日继续加油！登记最新人数，向排行榜前列冲刺 🚀
+              今日继续加油！普通登记 8分/人，OPP专场 10分/人，冲刺榜首 🚀
             </p>
           </div>
         </div>

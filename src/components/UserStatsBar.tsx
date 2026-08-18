@@ -1,5 +1,5 @@
 import React from 'react'
-import { Trophy, Award, TrendingUp, Plus } from 'lucide-react'
+import { Trophy, Sparkles, Users, Plus } from 'lucide-react'
 import { LeaderboardItem, TimeRange } from '../types'
 import { useAuth } from '../context/AuthContext'
 
@@ -16,8 +16,9 @@ export const UserStatsBar: React.FC<UserStatsBarProps> = ({ items, timeRange, on
 
   const myItem = items.find((item) => item.userId === profile.id)
   const myRank = myItem?.rank ?? null
+  const myPoints = myItem?.totalPoints ?? 0
   const myAmount = myItem?.totalAmount ?? 0
-  const myCount = myItem?.submissionCount ?? 0
+  const myOpp = myItem?.oppAmount ?? 0
 
   const rangeText = timeRange === 'all' ? '总榜' : timeRange === 'month' ? '月榜' : '周榜'
 
@@ -39,12 +40,13 @@ export const UserStatsBar: React.FC<UserStatsBarProps> = ({ items, timeRange, on
                 当前排名：<strong>{myRank ? `第 ${myRank} 名` : '暂未上榜'}</strong>
               </span>
               <span className="metric-pill">
-                <TrendingUp size={14} className="metric-icon blue" />
-                累计人数：<strong>{myAmount} 人</strong>
+                <Sparkles size={14} className="metric-icon gold" />
+                累计积分：<strong>{myPoints} 分</strong>
               </span>
               <span className="metric-pill">
-                <Award size={14} className="metric-icon purple" />
-                提交次数：<strong>{myCount} 次</strong>
+                <Users size={14} className="metric-icon blue" />
+                累计人数：<strong>{myAmount} 人</strong>
+                {myOpp > 0 && <span className="stats-opp-sub">(OPP {myOpp}人)</span>}
               </span>
             </div>
           </div>
@@ -52,7 +54,7 @@ export const UserStatsBar: React.FC<UserStatsBarProps> = ({ items, timeRange, on
 
         <button className="btn-stats-submit" onClick={onFocusSubmit}>
           <Plus size={16} />
-          <span>立即登记人数</span>
+          <span>立即登记人数与积分</span>
         </button>
       </div>
     </div>

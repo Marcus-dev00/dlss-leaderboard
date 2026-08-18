@@ -1,7 +1,7 @@
 /* ==========================================================================
    DLSS 人数登记排行榜 - 旗舰极简暖色设计系统 (Warm Minimalist Aesthetic)
    色调：温暖奶油米白 (Warm Cream) + 纯白卡片 + 暖陶土焦糖橙 (Terracotta & Amber)
-   统一按钮色调 | 多语言完美对齐 | 灵动岛悬浮底栏
+   统一按钮色调 | 多语言完美对齐 | 大号灵动岛悬浮底栏
    ========================================================================== */
 
 :root {
@@ -62,7 +62,7 @@
   /* 暖色柔和阴影 */
   --shadow-sm: 0 1px 2px rgba(60, 45, 30, 0.04);
   --shadow-card: 0 1px 3px rgba(60, 45, 30, 0.04), 0 6px 20px -4px rgba(60, 45, 30, 0.05);
-  --shadow-float: 0 12px 36px -4px rgba(60, 45, 30, 0.08), 0 4px 12px rgba(60, 45, 30, 0.03);
+  --shadow-float: 0 14px 40px -4px rgba(60, 45, 30, 0.14), 0 4px 14px rgba(60, 45, 30, 0.04);
 
   --transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -392,7 +392,7 @@ body {
   max-width: 860px;
   width: 100%;
   margin: 0 auto;
-  padding: 16px 14px 96px;
+  padding: 16px 14px 110px; /* 增加底部留白防止遮挡 */
 }
 
 .header {
@@ -1310,73 +1310,73 @@ body {
 }
 
 /* ==========================================================================
-   5. 底部悬浮灵动岛战绩栏 (UserStats Floating Island Capsule)
+   5. 大号悬浮灵动岛战绩栏 (Enlarged UserStats Floating Island)
    ========================================================================== */
 
 .user-stats-floating-island {
   position: fixed;
-  bottom: 20px;
+  bottom: 22px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 30;
   width: auto;
-  max-width: calc(100% - 24px);
+  max-width: calc(100% - 32px);
   animation: islandPop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes islandPop {
-  from { opacity: 0; transform: translate(-50%, 12px) scale(0.95); }
+  from { opacity: 0; transform: translate(-50%, 14px) scale(0.95); }
   to { opacity: 1; transform: translate(-50%, 0) scale(1); }
 }
 
 .user-stats-island-inner {
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.96);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1.5px solid rgba(218, 209, 193, 0.85);
+  border: 1.5px solid rgba(218, 209, 193, 0.9);
   border-radius: var(--radius-full);
-  box-shadow: 0 10px 30px -4px rgba(60, 45, 30, 0.14), 0 2px 8px rgba(60, 45, 30, 0.05);
-  padding: 6px 8px 6px 12px;
+  box-shadow: var(--shadow-float);
+  padding: 8px 10px 8px 16px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   white-space: nowrap;
 }
 
 .island-user-pill {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   flex-shrink: 0;
 }
 
 .island-avatar {
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   background: linear-gradient(135deg, #ea580c, #c2410c);
   color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   font-weight: 800;
-  box-shadow: 0 1px 4px rgba(194, 65, 12, 0.2);
+  box-shadow: 0 2px 6px rgba(194, 65, 12, 0.25);
 }
 
 .island-name {
   font-weight: 800;
-  font-size: 0.86rem;
+  font-size: 0.95rem;
   color: var(--text-main);
-  max-width: 90px;
+  max-width: 100px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .island-divider {
-  width: 1px;
-  height: 16px;
+  width: 1.5px;
+  height: 20px;
   background: var(--border-medium);
   flex-shrink: 0;
 }
@@ -1384,7 +1384,7 @@ body {
 .island-metrics-row {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   flex-shrink: 1;
   min-width: 0;
 }
@@ -1392,14 +1392,15 @@ body {
 .island-badge {
   display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 3px 8px;
+  gap: 5px;
+  padding: 5px 11px;
   border-radius: var(--radius-full);
-  font-size: 0.8rem;
+  font-size: 0.88rem;
   font-weight: 700;
   white-space: nowrap;
   background: var(--bg-subtle);
   border: 1px solid var(--border-subtle);
+  transition: var(--transition);
 }
 
 .island-badge.rank {
@@ -1436,7 +1437,7 @@ body {
 }
 
 .island-badge-val small {
-  font-size: 0.68rem;
+  font-size: 0.72rem;
   font-weight: 600;
   color: var(--text-muted);
 }
@@ -1444,25 +1445,25 @@ body {
 .island-btn-record {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   background: linear-gradient(135deg, #ea580c, #c2410c);
   color: #ffffff;
   border: none;
   border-radius: var(--radius-full);
-  padding: 6px 14px;
-  font-size: 0.82rem;
-  font-weight: 700;
+  padding: 9px 18px;
+  font-size: 0.9rem;
+  font-weight: 800;
   cursor: pointer;
   white-space: nowrap;
   flex-shrink: 0;
-  box-shadow: 0 2px 8px rgba(194, 65, 12, 0.25);
+  box-shadow: 0 4px 12px rgba(194, 65, 12, 0.28);
   transition: var(--transition);
 }
 
 .island-btn-record:hover {
   background: linear-gradient(135deg, #f97316, #ea580c);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(194, 65, 12, 0.35);
+  box-shadow: 0 6px 16px rgba(194, 65, 12, 0.38);
 }
 
 /* ==========================================================================
@@ -1853,37 +1854,37 @@ body {
     display: none;
   }
 
-  /* 灵动岛移动端 */
+  /* 灵动岛移动端 (大号舒适尺寸) */
   .user-stats-floating-island {
-    bottom: calc(10px + env(safe-area-inset-bottom, 0));
+    bottom: calc(12px + env(safe-area-inset-bottom, 0));
     width: calc(100% - 16px);
   }
 
   .user-stats-island-inner {
-    padding: 4px 5px 4px 8px;
-    gap: 5px;
+    padding: 6px 8px 6px 10px;
+    gap: 6px;
     justify-content: space-between;
   }
 
   .island-name {
-    max-width: 60px;
-    font-size: 0.78rem;
+    max-width: 65px;
+    font-size: 0.84rem;
   }
 
   .island-avatar {
-    width: 20px;
-    height: 20px;
-    font-size: 0.7rem;
+    width: 24px;
+    height: 24px;
+    font-size: 0.76rem;
   }
 
   .island-badge {
-    padding: 2px 6px;
-    font-size: 0.74rem;
+    padding: 4px 7px;
+    font-size: 0.8rem;
     gap: 3px;
   }
 
   .island-btn-record {
-    padding: 5px 10px;
-    font-size: 0.76rem;
+    padding: 7px 12px;
+    font-size: 0.82rem;
   }
 }

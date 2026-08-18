@@ -35,24 +35,24 @@ export const UserStatsBar: React.FC<UserStatsBarProps> = ({ items, onFocusSubmit
         {/* 个人战绩指标胶囊 */}
         <div className="island-metrics-row">
           <div className="island-badge rank" title={t.myRankLabel}>
-            <Trophy size={13} className="island-icon gold" />
+            <Trophy size={15} className="island-icon gold" />
             <span className="island-badge-val">{myRank ? `#${myRank}` : '-'}</span>
           </div>
 
           <div className="island-badge points" title={t.myPointsLabel}>
-            <Sparkles size={13} className="island-icon amber" />
+            <Sparkles size={15} className="island-icon amber" />
             <span className="island-badge-val">{myPoints.toLocaleString()} <small>{t.pointsUnit}</small></span>
           </div>
 
           <div className="island-badge pax" title={t.myPaxLabel}>
-            <Users size={13} className="island-icon stone" />
+            <Users size={15} className="island-icon stone" />
             <span className="island-badge-val">{myAmount.toLocaleString()} <small>{t.paxUnit}</small></span>
           </div>
         </div>
 
-        {/* 快捷登记主操作 */}
+        {/* 快捷登记大号主按键 */}
         <button className="island-btn-record" onClick={onFocusSubmit} aria-label={t.btnRecord}>
-          <Plus size={15} />
+          <Plus size={17} />
           <span>{t.btnRecord}</span>
         </button>
       </div>

@@ -3,7 +3,7 @@ import { Header } from './components/Header'
 import { SubmitCard } from './components/SubmitCard'
 import { Leaderboard } from './components/Leaderboard'
 import { HistoryModal } from './components/HistoryModal'
-import { AuthModal } from './components/AuthModal'
+import { LoginPage } from './components/LoginPage'
 import { UserStatsBar } from './components/UserStatsBar'
 import { LeaderboardItem, Profile, Submission, TimeRange } from './types'
 import { supabase } from './lib/supabase'
@@ -11,12 +11,11 @@ import { getStartOfWeek, getStartOfMonth } from './lib/dateUtils'
 import { useAuth } from './context/AuthContext'
 
 export const App: React.FC = () => {
-  const { user } = useAuth()
+  const { user, profile, loading: authLoading } = useAuth()
   const [timeRange, setTimeRange] = useState<TimeRange>('all')
   const [leaderboardItems, setLeaderboardItems] = useState<LeaderboardItem[]>([])
-  const [loading, setLoading] = useState<boolean>(true)
+  const [loadingData, setLoadingData] = useState<boolean>(true)
   const [isRealtimeActive, setIsRealtimeActive] = useState<boolean>(false)
-  const [isAuthOpen, setIsAuthOpen] = useState<boolean>(false)
   const [isHistoryOpen, setIsHistoryOpen] = useState<boolean>(false)
 
   const submitSectionRef = useRef<HTMLDivElement>(null)
@@ -24,7 +23,7 @@ export const App: React.FC = () => {
   // 获取排行榜数据
   const fetchLeaderboardData = useCallback(async () => {
     try {
-      setLoading(true)
+      setLoadingData(true)
 
       // 1. 获取所有员工 Profile
       const { data: profilesData, error: profilesError } = await supabase
@@ -85,8 +84,7 @@ export const App: React.FC = () => {
       const rawList: LeaderboardItem[] = []
 
       statsMap.forEach((stats, userId) => {
-        const name = profileMap.get(userId) || '未命名员工'
-        // 只有当有提交或者属于已有 profile 时列入
+        const name = profileMap.get(userId) || '员工'
         rawList.push({
           userId,
           name,
@@ -118,17 +116,21 @@ export const App: React.FC = () => {
     } catch (err) {
       console.error('Fetch leaderboard failed:', err)
     } finally {
-      setLoading(false)
+      setLoadingData(false)
     }
   }, [timeRange])
 
   // 初始加载及 Tab 切换加载
   useEffect(() => {
-    fetchLeaderboardData()
-  }, [fetchLeaderboardData])
+    if (user) {
+      fetchLeaderboardData()
+    }
+  }, [user, fetchLeaderboardData])
 
   // 设置 Supabase Realtime 实时订阅
   useEffect(() => {
+    if (!user) return
+
     const channel = supabase
       .channel('realtime_submissions_changes')
       .on(
@@ -139,7 +141,6 @@ export const App: React.FC = () => {
           table: 'submissions'
         },
         (_payload) => {
-          // 有任何新增/删除/修改，立刻重新拉取最新数据
           fetchLeaderboardData()
         }
       )
@@ -165,34 +166,60 @@ export const App: React.FC = () => {
     return () => {
       supabase.removeChannel(channel)
     }
-  }, [fetchLeaderboardData])
+  }, [user, fetchLeaderboardData])
 
   const handleFocusSubmit = () => {
-    if (!user) {
-      setIsAuthOpen(true)
-    } else {
-      submitSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-      const input = document.getElementById('amount-input')
-      input?.focus()
-    }
+    submitSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    const input = document.getElementById('amount-input')
+    input?.focus()
   }
 
+  // 1. 如果还在检查登录状态
+  if (authLoading) {
+    return (
+      <div className="splash-screen">
+        <div className="splash-card">
+          <div className="splash-spinner"></div>
+          <p className="splash-text">正在加载系统...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // 2. 如果未登录，直接显示全屏登录 / 注册欢迎页
+  if (!user || !profile) {
+    return <LoginPage />
+  }
+
+  // 3. 已登录，渲染主界面
   return (
     <div className="app-container">
       {/* Top Header */}
       <Header
         onOpenHistory={() => setIsHistoryOpen(true)}
-        onOpenAuth={() => setIsAuthOpen(true)}
+        onOpenAuth={() => {}}
         isRealtimeActive={isRealtimeActive}
       />
 
       {/* Main Page Body */}
       <main className="main-content">
+        {/* Welcome Banner */}
+        <div className="dashboard-hero">
+          <div className="hero-text">
+            <h2 className="hero-title">
+              👋 欢迎回来，<span className="hero-name">{profile.name}</span>！
+            </h2>
+            <p className="hero-subtitle">
+              今日继续加油！登记最新人数，向排行榜前列冲刺 🚀
+            </p>
+          </div>
+        </div>
+
         {/* Quick Submit Form Card */}
         <div ref={submitSectionRef}>
           <SubmitCard
             onSubmitted={fetchLeaderboardData}
-            onOpenAuth={() => setIsAuthOpen(true)}
+            onOpenAuth={() => {}}
           />
         </div>
 
@@ -201,7 +228,7 @@ export const App: React.FC = () => {
           items={leaderboardItems}
           timeRange={timeRange}
           onChangeTimeRange={setTimeRange}
-          loading={loading}
+          loading={loadingData}
         />
       </main>
 
@@ -212,12 +239,7 @@ export const App: React.FC = () => {
         onFocusSubmit={handleFocusSubmit}
       />
 
-      {/* Modals */}
-      <AuthModal
-        isOpen={isAuthOpen}
-        onClose={() => setIsAuthOpen(false)}
-      />
-
+      {/* History Modal */}
       <HistoryModal
         isOpen={isHistoryOpen}
         onClose={() => setIsHistoryOpen(false)}

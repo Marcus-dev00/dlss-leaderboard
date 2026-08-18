@@ -1,7 +1,7 @@
 /* ==========================================================================
    DLSS 人数登记排行榜 - 旗舰极简暖色设计系统 (Warm Minimalist Aesthetic)
    色调：温暖奶油米白 (Warm Cream) + 纯白卡片 + 暖陶土焦糖橙 (Terracotta & Amber)
-   统一按钮色调 | 多语言完美对齐 | 大号灵动岛悬浮底栏
+   纯姓名免密模式 | 统一按钮色调 | 多语言完美对齐 | 大号灵动岛悬浮底栏
    ========================================================================== */
 
 :root {
@@ -147,7 +147,7 @@ body {
 }
 
 /* ==========================================================================
-   1. 登录注册页 (LoginPage)
+   1. 登录注册页 (LoginPage) - 纯姓名免密模式
    ========================================================================== */
 
 .login-screen {
@@ -170,7 +170,7 @@ body {
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
-  padding: 36px 30px;
+  padding: 40px 32px;
   width: 100%;
   max-width: 390px;
   box-shadow: var(--shadow-float);
@@ -188,12 +188,12 @@ body {
   align-items: center;
   text-align: center;
   gap: 8px;
-  margin-bottom: 22px;
+  margin-bottom: 16px;
 }
 
 .login-logo-box {
-  width: 48px;
-  height: 48px;
+  width: 52px;
+  height: 52px;
   border-radius: var(--radius-md);
   background: linear-gradient(135deg, #ea580c, #c2410c);
   display: flex;
@@ -204,8 +204,8 @@ body {
 }
 
 .login-logo-icon {
-  width: 24px;
-  height: 24px;
+  width: 26px;
+  height: 26px;
 }
 
 .login-brand-group {
@@ -216,7 +216,7 @@ body {
 }
 
 .login-brand-name {
-  font-size: 1.5rem;
+  font-size: 1.55rem;
   font-weight: 900;
   letter-spacing: -0.02em;
   color: var(--text-main);
@@ -241,71 +241,44 @@ body {
   margin-top: 4px;
 }
 
-.auth-tab-switch {
-  display: flex;
-  background: var(--bg-subtle);
-  padding: 3px;
-  border-radius: var(--radius-md);
-  margin-bottom: 16px;
+.login-intro-text {
+  text-align: center;
+  margin-bottom: 20px;
 }
 
-.auth-tab-btn {
-  flex: 1;
-  padding: 8px;
-  border: none;
-  background: none;
+.login-intro-subtitle {
+  font-size: 0.86rem;
+  font-weight: 600;
   color: var(--text-secondary);
-  font-size: 0.88rem;
-  font-weight: 700;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: var(--transition);
-}
-
-.auth-tab-btn.active {
-  background: #ffffff;
-  color: var(--text-main);
-  box-shadow: var(--shadow-sm);
 }
 
 .auth-error-banner {
   background: #fff1f2;
   border: 1px solid #fecdd3;
   color: #be123c;
-  padding: 8px 12px;
+  padding: 9px 12px;
   border-radius: var(--radius-sm);
   font-size: 0.82rem;
   font-weight: 600;
-  margin-bottom: 14px;
+  margin-bottom: 16px;
 }
 
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 16px;
 }
 
 .form-field {
   display: flex;
   flex-direction: column;
-  gap: 5px;
-}
-
-.label-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  gap: 6px;
 }
 
 .input-label {
-  font-size: 0.82rem;
+  font-size: 0.84rem;
   font-weight: 700;
   color: var(--text-main);
-}
-
-.pwd-hint {
-  font-size: 0.72rem;
-  color: var(--text-muted);
 }
 
 .input-box {
@@ -316,40 +289,39 @@ body {
 
 .field-icon {
   position: absolute;
-  left: 12px;
+  left: 14px;
   color: var(--text-muted);
 }
 
-.styled-input {
+.styled-input.name-only-input {
   width: 100%;
+  height: 48px;
   background: var(--bg-subtle);
-  border: 1px solid var(--border-subtle);
+  border: 1.5px solid var(--border-subtle);
   border-radius: var(--radius-sm);
-  padding: 10px 36px 10px 38px;
+  padding: 0 16px 0 42px;
   color: var(--text-main);
-  font-size: 0.92rem;
+  font-size: 0.96rem;
+  font-weight: 600;
   font-family: inherit;
   outline: none;
   transition: var(--transition);
 }
 
-.styled-input:focus {
+.styled-input.name-only-input:focus {
   border-color: var(--primary);
   background: #ffffff;
   box-shadow: 0 0 0 3px rgba(194, 65, 12, 0.1);
 }
 
-.pwd-toggle {
-  position: absolute;
-  right: 10px;
-  background: none;
-  border: none;
+.styled-input.name-only-input::placeholder {
   color: var(--text-muted);
-  cursor: pointer;
-  padding: 4px;
+  font-weight: 400;
 }
 
-.btn-login-submit {
+.btn-login-submit.name-only-btn {
+  width: 100%;
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -358,18 +330,18 @@ body {
   color: #ffffff;
   border: none;
   border-radius: var(--radius-sm);
-  padding: 12px;
-  font-size: 0.95rem;
-  font-weight: 700;
+  font-size: 0.98rem;
+  font-weight: 800;
   cursor: pointer;
   transition: var(--transition);
   margin-top: 4px;
   box-shadow: 0 4px 14px rgba(194, 65, 12, 0.25);
 }
 
-.btn-login-submit:hover:not(:disabled) {
+.btn-login-submit.name-only-btn:hover:not(:disabled) {
   background: linear-gradient(135deg, #f97316, #ea580c);
   transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(194, 65, 12, 0.3);
 }
 
 .btn-login-submit:disabled {
@@ -392,7 +364,7 @@ body {
   max-width: 860px;
   width: 100%;
   margin: 0 auto;
-  padding: 16px 14px 110px; /* 增加底部留白防止遮挡 */
+  padding: 16px 14px 110px;
 }
 
 .header {
@@ -1854,7 +1826,7 @@ body {
     display: none;
   }
 
-  /* 灵动岛移动端 (大号舒适尺寸) */
+  /* 灵动岛移动端 */
   .user-stats-floating-island {
     bottom: calc(12px + env(safe-area-inset-bottom, 0));
     width: calc(100% - 16px);

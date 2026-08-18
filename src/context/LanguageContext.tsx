@@ -8,18 +8,13 @@ export interface Translations {
   studioName: string
   leaderboardTitle: string
   
-  // Login Page
-  loginTab: string
-  registerTab: string
+  // Login Page (免密模式)
+  loginWelcome: string
+  loginSubtitle: string
   nameLabel: string
   namePlaceholder: string
-  pwdLabel: string
-  pwdHint: string
-  pwdPlaceholder: string
-  btnLogin: string
-  btnRegister: string
+  btnEnter: string
   nameRequired: string
-  pwdRequired: string
 
   // Header & Navigation
   history: string
@@ -73,17 +68,12 @@ const translations: Record<Language, Translations> = {
     studioName: 'Diamond Life Style Studio',
     leaderboardTitle: 'Leaderboard',
 
-    loginTab: 'Login',
-    registerTab: 'Register',
+    loginWelcome: 'Welcome',
+    loginSubtitle: 'Enter your name to start',
     nameLabel: 'Employee Name',
-    namePlaceholder: 'Enter your name',
-    pwdLabel: 'Password',
-    pwdHint: 'Min 6 characters',
-    pwdPlaceholder: 'Enter password',
-    btnLogin: 'Login',
-    btnRegister: 'Register & Enter',
-    nameRequired: 'Please enter employee name',
-    pwdRequired: 'Password must be at least 6 characters',
+    namePlaceholder: 'e.g. Dylan, Marcus...',
+    btnEnter: 'Enter Leaderboard',
+    nameRequired: 'Please enter your name',
 
     history: 'History',
     logout: 'Logout',
@@ -131,17 +121,12 @@ const translations: Record<Language, Translations> = {
     studioName: 'Diamond Life Style Studio',
     leaderboardTitle: '人数排行榜',
 
-    loginTab: '员工登录',
-    registerTab: '首次注册',
+    loginWelcome: '欢迎使用',
+    loginSubtitle: '输入姓名即可快速进入',
     nameLabel: '员工姓名',
-    namePlaceholder: '输入您的姓名',
-    pwdLabel: '登录密码',
-    pwdHint: '不少于 6 位',
-    pwdPlaceholder: '输入密码',
-    btnLogin: '登录',
-    btnRegister: '注册并进入',
+    namePlaceholder: '例如：Dylan, Marcus...',
+    btnEnter: '进入排行榜',
     nameRequired: '请输入员工姓名',
-    pwdRequired: '密码至少 6 位',
 
     history: '历史',
     logout: '退出',
@@ -189,17 +174,12 @@ const translations: Record<Language, Translations> = {
     studioName: 'Diamond Life Style Studio',
     leaderboardTitle: 'Papan Pendahulu',
 
-    loginTab: 'Log Masuk',
-    registerTab: 'Daftar Akaun',
+    loginWelcome: 'Selamat Datang',
+    loginSubtitle: 'Masukkan nama anda untuk mula',
     nameLabel: 'Nama Pekerja',
-    namePlaceholder: 'Masukkan nama anda',
-    pwdLabel: 'Kata Laluan',
-    pwdHint: 'Min 6 aksara',
-    pwdPlaceholder: 'Masukkan kata laluan',
-    btnLogin: 'Log Masuk',
-    btnRegister: 'Daftar & Masuk',
+    namePlaceholder: 'cth. Dylan, Marcus...',
+    btnEnter: 'Masuk Sekarang',
     nameRequired: 'Sila masukkan nama pekerja',
-    pwdRequired: 'Kata laluan sekurang-kurangnya 6 aksara',
 
     history: 'Sejarah',
     logout: 'Log Keluar',

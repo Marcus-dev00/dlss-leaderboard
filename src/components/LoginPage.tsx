@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Trophy, Lock, User, Eye, EyeOff, ArrowRight } from 'lucide-react'
+import { Trophy, User, ArrowRight } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { useLanguage } from '../context/LanguageContext'
 import { LanguageSwitcher } from './LanguageSwitcher'
@@ -8,11 +8,8 @@ export const LoginPage: React.FC = () => {
   const { login } = useAuth()
   const { t } = useLanguage()
   const [name, setName] = useState('')
-  const [password, setPassword] = useState('')
-  const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
-  const [activeTab, setActiveTab] = useState<'login' | 'register'>('login')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -23,13 +20,9 @@ export const LoginPage: React.FC = () => {
       setErrorMessage(t.nameRequired)
       return
     }
-    if (!password || password.length < 6) {
-      setErrorMessage(t.pwdRequired)
-      return
-    }
 
     setLoading(true)
-    const res = await login(trimmed, password)
+    const res = await login(trimmed)
     setLoading(false)
 
     if (!res.success) {
@@ -57,22 +50,8 @@ export const LoginPage: React.FC = () => {
           <div className="login-badge-pill">{t.leaderboardTitle}</div>
         </div>
 
-        {/* Tab switch */}
-        <div className="auth-tab-switch">
-          <button
-            type="button"
-            className={`auth-tab-btn ${activeTab === 'login' ? 'active' : ''}`}
-            onClick={() => { setActiveTab('login'); setErrorMessage(null); }}
-          >
-            {t.loginTab}
-          </button>
-          <button
-            type="button"
-            className={`auth-tab-btn ${activeTab === 'register' ? 'active' : ''}`}
-            onClick={() => { setActiveTab('register'); setErrorMessage(null); }}
-          >
-            {t.registerTab}
-          </button>
+        <div className="login-intro-text">
+          <p className="login-intro-subtitle">{t.loginSubtitle}</p>
         </div>
 
         {errorMessage && (
@@ -97,53 +76,23 @@ export const LoginPage: React.FC = () => {
                 required
                 autoFocus
                 disabled={loading}
-                className="styled-input"
+                className="styled-input name-only-input"
+                maxLength={30}
               />
-            </div>
-          </div>
-
-          <div className="form-field">
-            <div className="label-row">
-              <label htmlFor="login-pwd" className="input-label">
-                {t.pwdLabel}
-              </label>
-              <span className="pwd-hint">{t.pwdHint}</span>
-            </div>
-            <div className="input-box">
-              <Lock size={18} className="field-icon" />
-              <input
-                id="login-pwd"
-                type={showPassword ? 'text' : 'password'}
-                placeholder={t.pwdPlaceholder}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                minLength={6}
-                disabled={loading}
-                className="styled-input"
-              />
-              <button
-                type="button"
-                className="pwd-toggle"
-                onClick={() => setShowPassword(!showPassword)}
-                tabIndex={-1}
-              >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-              </button>
             </div>
           </div>
 
           <button
             type="submit"
-            className="btn-login-submit"
-            disabled={loading}
+            className="btn-login-submit name-only-btn"
+            disabled={loading || !name.trim()}
           >
             {loading ? (
               <span className="loading-spinner"></span>
             ) : (
               <>
-                <span>{activeTab === 'login' ? t.btnLogin : t.btnRegister}</span>
-                <ArrowRight size={16} />
+                <span>{t.btnEnter}</span>
+                <ArrowRight size={17} />
               </>
             )}
           </button>

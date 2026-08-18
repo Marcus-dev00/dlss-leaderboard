@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { X, Lock, User, Eye, EyeOff, Sparkles, AlertCircle } from 'lucide-react'
+import { X, User, Sparkles, AlertCircle } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 
 interface AuthModalProps {
@@ -10,8 +10,6 @@ interface AuthModalProps {
 export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
   const { login } = useAuth()
   const [name, setName] = useState('')
-  const [password, setPassword] = useState('')
-  const [showPassword, setShowPassword] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
 
@@ -25,19 +23,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
       setErrorMsg('请输入您的姓名')
       return
     }
-    if (!password || password.length < 6) {
-      setErrorMsg('密码长度不能少于 6 位')
-      return
-    }
 
     setSubmitting(true)
-    const res = await login(name, password)
+    const res = await login(name)
     setSubmitting(false)
 
     if (res.success) {
       onClose()
       setName('')
-      setPassword('')
     } else {
       setErrorMsg(res.error || '登录失败，请重试')
     }
@@ -53,8 +46,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
               <Sparkles className="auth-icon" />
             </div>
             <div>
-              <h2 className="modal-title">员工登录 / 登记</h2>
-              <p className="modal-subtitle">首次输入姓名与密码将自动完成注册</p>
+              <h2 className="modal-title">员工登记 / 进入</h2>
+              <p className="modal-subtitle">输入姓名即可快速进入系统</p>
             </div>
           </div>
           <button className="modal-close-btn" onClick={onClose} aria-label="关闭">
@@ -79,7 +72,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
               <input
                 id="auth-name"
                 type="text"
-                placeholder="例如：张三、李四"
+                placeholder="例如：Dylan, Marcus"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
@@ -88,36 +81,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                 className="form-input"
               />
             </div>
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="auth-pwd" className="field-label">密码 (不少于 6 位)</label>
-            <div className="input-with-icon">
-              <Lock size={18} className="input-icon" />
-              <input
-                id="auth-pwd"
-                type={showPassword ? 'text' : 'password'}
-                placeholder="输入登录密码"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                minLength={6}
-                disabled={submitting}
-                className="form-input"
-              />
-              <button
-                type="button"
-                className="toggle-pwd-btn"
-                onClick={() => setShowPassword(!showPassword)}
-                tabIndex={-1}
-              >
-                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-              </button>
-            </div>
-          </div>
-
-          <div className="auth-tip-box">
-            💡 <strong>温馨提示：</strong>请牢记您的密码，后续切换设备或重新登录时需凭姓名与密码验证身份。
           </div>
 
           <div className="modal-footer">

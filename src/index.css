@@ -71,7 +71,7 @@ body {
 }
 
 /* ==========================================================================
-   1. 登录页 (LoginPage) 极简版
+   1. 极简居中单卡片登录 (LoginPage)
    ========================================================================== */
 
 .login-screen {
@@ -82,28 +82,25 @@ body {
   padding: 24px;
 }
 
-.login-container {
-  display: grid;
-  grid-template-columns: 1fr 1.1fr;
-  gap: 40px;
-  max-width: 860px;
+.login-centered-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 32px 28px;
   width: 100%;
-  align-items: center;
+  max-width: 380px;
+  box-shadow: var(--shadow-card);
 }
 
-.login-brand-panel {
+.login-header-simple {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-}
-
-.brand-header {
-  display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
+  margin-bottom: 20px;
 }
 
-.brand-logo-large {
+.login-logo-box {
   width: 44px;
   height: 44px;
   border-radius: var(--radius-md);
@@ -114,75 +111,15 @@ body {
   color: #ffffff;
 }
 
-.brand-trophy-icon {
-  width: 24px;
-  height: 24px;
+.login-logo-icon {
+  width: 22px;
+  height: 22px;
 }
 
-.brand-badge-pill {
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: var(--primary);
-  background: var(--primary-bg);
-  padding: 2px 8px;
-  border-radius: var(--radius-full);
-  display: inline-block;
-  margin-bottom: 2px;
-}
-
-.login-main-title {
-  font-size: 1.8rem;
+.login-title-simple {
+  font-size: 1.25rem;
   font-weight: 800;
   color: var(--text-main);
-  line-height: 1.2;
-}
-
-.login-description {
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-}
-
-.login-feature-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.feature-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-}
-
-.feature-icon-box {
-  width: 28px;
-  height: 28px;
-  border-radius: var(--radius-sm);
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--primary);
-}
-
-.feature-text strong {
-  color: var(--text-main);
-}
-
-.login-footer-stats {
-  display: none;
-}
-
-/* 登录卡片 */
-.auth-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-lg);
-  padding: 32px 28px;
-  box-shadow: var(--shadow-card);
 }
 
 .auth-tab-switch {
@@ -190,7 +127,7 @@ body {
   background: var(--bg-elevated);
   padding: 3px;
   border-radius: var(--radius-md);
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 }
 
 .auth-tab-btn {
@@ -210,13 +147,6 @@ body {
   background: #ffffff;
   color: var(--text-main);
   box-shadow: var(--shadow-sm);
-}
-
-.auth-card-subtitle {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  text-align: center;
-  margin-bottom: 18px;
 }
 
 .auth-error-banner {
@@ -246,6 +176,11 @@ body {
   font-size: 0.82rem;
   font-weight: 700;
   color: var(--text-main);
+}
+
+.pwd-hint {
+  font-size: 0.72rem;
+  color: var(--text-muted);
 }
 
 .input-box {
@@ -286,17 +221,6 @@ body {
   cursor: pointer;
 }
 
-.auth-smart-hint {
-  font-size: 0.76rem;
-  color: #9a3412;
-  background: #fff7ed;
-  padding: 8px 10px;
-  border-radius: var(--radius-sm);
-  display: flex;
-  gap: 6px;
-  align-items: flex-start;
-}
-
 .btn-login-submit {
   display: flex;
   align-items: center;
@@ -311,10 +235,16 @@ body {
   font-weight: 700;
   cursor: pointer;
   transition: var(--transition);
+  margin-top: 4px;
 }
 
 .btn-login-submit:hover:not(:disabled) {
   background: var(--primary-hover);
+}
+
+.btn-login-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 /* ==========================================================================
@@ -439,7 +369,7 @@ body {
 }
 
 /* ==========================================================================
-   3. 登记卡片 (SubmitCard) - 舒适大号区域
+   3. 登记卡片 (SubmitCard)
    ========================================================================== */
 
 .submit-card {
@@ -1407,15 +1337,6 @@ body {
 
 /* 移动端适配 */
 @media (max-width: 640px) {
-  .login-container {
-    grid-template-columns: 1fr;
-    gap: 24px;
-  }
-
-  .login-brand-panel {
-    display: none;
-  }
-
   .amount-focus-area {
     grid-template-columns: 1fr;
   }

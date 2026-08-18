@@ -71,7 +71,7 @@ body {
 }
 
 /* ==========================================================================
-   1. 极简居中单卡片登录 (LoginPage)
+   1. 极简居中单卡片登录 (LoginPage) - DLSS 品牌
    ========================================================================== */
 
 .login-screen {
@@ -96,30 +96,59 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  text-align: center;
   gap: 8px;
-  margin-bottom: 20px;
+  margin-bottom: 22px;
 }
 
 .login-logo-box {
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   border-radius: var(--radius-md);
   background: linear-gradient(135deg, #ea580c, #c2410c);
   display: flex;
   align-items: center;
   justify-content: center;
   color: #ffffff;
+  box-shadow: 0 4px 12px rgba(194, 65, 12, 0.2);
 }
 
 .login-logo-icon {
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
 }
 
-.login-title-simple {
-  font-size: 1.25rem;
-  font-weight: 800;
+.login-brand-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.login-brand-name {
+  font-size: 1.45rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
   color: var(--text-main);
+  line-height: 1.2;
+}
+
+.login-studio-sub {
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.02em;
+}
+
+.login-badge-pill {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #c2410c;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  padding: 2px 10px;
+  border-radius: var(--radius-full);
+  margin-top: 2px;
 }
 
 .auth-tab-switch {
@@ -170,6 +199,12 @@ body {
   display: flex;
   flex-direction: column;
   gap: 4px;
+}
+
+.label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .input-label {
@@ -248,7 +283,7 @@ body {
 }
 
 /* ==========================================================================
-   2. 主界面 Header
+   2. 主界面 Header - DLSS 品牌
    ========================================================================== */
 
 .app-container {
@@ -276,7 +311,7 @@ body {
 .header-container {
   max-width: 860px;
   margin: 0 auto;
-  padding: 12px 16px;
+  padding: 10px 16px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -285,12 +320,12 @@ body {
 .brand-box {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 
 .brand-icon-wrapper {
-  width: 30px;
-  height: 30px;
+  width: 34px;
+  height: 34px;
   border-radius: var(--radius-sm);
   background: var(--primary);
   display: flex;
@@ -300,14 +335,44 @@ body {
 }
 
 .brand-icon {
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
+}
+
+.brand-text-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-title-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.brand-company {
+  font-size: 1.05rem;
+  font-weight: 900;
+  color: var(--text-main);
+  letter-spacing: -0.02em;
+}
+
+.brand-sep {
+  color: var(--border-medium);
+  font-size: 0.85rem;
 }
 
 .brand-title {
-  font-size: 1.05rem;
+  font-size: 1rem;
   font-weight: 800;
   color: var(--text-main);
+}
+
+.brand-studio-sub {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  letter-spacing: 0.02em;
+  line-height: 1.1;
 }
 
 .header-actions {

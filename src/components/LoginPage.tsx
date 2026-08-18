@@ -42,7 +42,11 @@ export const LoginPage: React.FC = () => {
           <div className="login-logo-box">
             <Trophy className="login-logo-icon" />
           </div>
-          <h1 className="login-title-simple">人数排行榜</h1>
+          <div className="login-brand-group">
+            <h1 className="login-brand-name">DLSS</h1>
+            <p className="login-studio-sub">Diamond Life Style Studio</p>
+          </div>
+          <div className="login-badge-pill">人数排行榜</div>
         </div>
 
         {/* Tab switch */}

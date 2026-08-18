@@ -17,7 +17,14 @@ export const Header: React.FC<HeaderProps> = ({ onOpenHistory }) => {
           <div className="brand-icon-wrapper">
             <Trophy className="brand-icon" />
           </div>
-          <h1 className="brand-title">人数排行榜</h1>
+          <div className="brand-text-col">
+            <div className="brand-title-row">
+              <span className="brand-company">DLSS</span>
+              <span className="brand-sep">·</span>
+              <h1 className="brand-title">人数排行榜</h1>
+            </div>
+            <span className="brand-studio-sub">Diamond Life Style Studio</span>
+          </div>
         </div>
 
         {/* User Actions */}

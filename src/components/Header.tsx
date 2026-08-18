@@ -22,7 +22,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenHistory }) => {
           </div>
           <div className="brand-text-col">
             <div className="brand-title-row">
-              <span className="brand-company">{t.brandName}</span>
+              <span className="brand-company">DLSS</span>
               <span className="brand-sep">·</span>
               <h1 className="brand-title">{t.leaderboardTitle}</h1>
             </div>
@@ -30,7 +30,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenHistory }) => {
           </div>
         </div>
 
-        {/* User Actions & Language Switcher */}
+        {/* Actions */}
         <div className="header-actions">
           <LanguageSwitcher compact />
 
@@ -47,18 +47,20 @@ export const Header: React.FC<HeaderProps> = ({ onOpenHistory }) => {
                 className="btn-header-action" 
                 onClick={onOpenHistory}
                 title={t.history}
+                aria-label={t.history}
               >
-                <History size={15} />
-                <span>{t.history}</span>
+                <History size={16} />
+                <span className="header-btn-label">{t.history}</span>
               </button>
 
               <button 
                 className="btn-header-action danger" 
                 onClick={logout}
                 title={t.logout}
+                aria-label={t.logout}
               >
-                <LogOut size={15} />
-                <span>{t.logout}</span>
+                <LogOut size={16} />
+                <span className="header-btn-label">{t.logout}</span>
               </button>
             </>
           )}

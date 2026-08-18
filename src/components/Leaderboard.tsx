@@ -32,8 +32,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
   const totalStats = useMemo(() => {
     const totalPoints = items.reduce((sum, item) => sum + item.totalPoints, 0)
     const totalAmount = items.reduce((sum, item) => sum + item.totalAmount, 0)
-    const topPerformer = items[0]?.name || '-'
-    return { totalPoints, totalAmount, topPerformer }
+    return { totalPoints, totalAmount }
   }, [items])
 
   // 前三名
@@ -46,7 +45,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
 
   return (
     <div className="leaderboard-card">
-      {/* 顶部控制栏：Tab + 搜索 */}
+      {/* 顶部控制栏：Tab + 汇总 + 搜索 */}
       <div className="leaderboard-nav">
         <div className="tab-group">
           <button
@@ -71,9 +70,9 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
 
         {/* 简洁汇总指示 */}
         <div className="compact-stats-pill">
-          <span>{t.totalPointsLabel}：<strong>{totalStats.totalPoints}</strong></span>
+          <span className="stats-metric-text">{t.totalPointsLabel}: <strong>{totalStats.totalPoints.toLocaleString()}</strong></span>
           <span className="dot-sep">·</span>
-          <span>{t.totalPaxLabel}：<strong>{totalStats.totalAmount}</strong></span>
+          <span className="stats-metric-text">{t.totalPaxLabel}: <strong>{totalStats.totalAmount.toLocaleString()}</strong></span>
         </div>
 
         {/* 搜索 */}
@@ -106,7 +105,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
       {/* 空状态 */}
       {!loading && items.length === 0 && (
         <div className="empty-leaderboard">
-          <Trophy size={40} className="empty-icon" />
+          <Trophy size={36} className="empty-icon" />
           <p className="empty-title">{t.noData}</p>
         </div>
       )}
@@ -123,8 +122,11 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
                   <span className="rank-tag silver">2</span>
                 </div>
                 <div className="podium-name" title={top2.name}>{top2.name}</div>
-                <div className="podium-score">{top2.totalPoints} <small>{t.pointsUnit}</small></div>
-                <div className="podium-sub">{top2.totalAmount} {t.paxUnit}</div>
+                <div className="podium-score">
+                  <span>{top2.totalPoints.toLocaleString()}</span>
+                  <small>{t.pointsUnit}</small>
+                </div>
+                <div className="podium-sub">{top2.totalAmount.toLocaleString()} {t.paxUnit}</div>
                 <div className="podium-stand silver-stand">
                   <Medal size={18} className="stand-icon" />
                 </div>
@@ -144,8 +146,11 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
                   <span className="rank-tag gold">1</span>
                 </div>
                 <div className="podium-name" title={top1.name}>{top1.name}</div>
-                <div className="podium-score gold">{top1.totalPoints} <small>{t.pointsUnit}</small></div>
-                <div className="podium-sub">{top1.totalAmount} {t.paxUnit}</div>
+                <div className="podium-score gold">
+                  <span>{top1.totalPoints.toLocaleString()}</span>
+                  <small>{t.pointsUnit}</small>
+                </div>
+                <div className="podium-sub">{top1.totalAmount.toLocaleString()} {t.paxUnit}</div>
                 <div className="podium-stand gold-stand">
                   <Trophy size={20} className="stand-icon" />
                 </div>
@@ -164,8 +169,11 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
                   <span className="rank-tag bronze">3</span>
                 </div>
                 <div className="podium-name" title={top3.name}>{top3.name}</div>
-                <div className="podium-score">{top3.totalPoints} <small>{t.pointsUnit}</small></div>
-                <div className="podium-sub">{top3.totalAmount} {t.paxUnit}</div>
+                <div className="podium-score">
+                  <span>{top3.totalPoints.toLocaleString()}</span>
+                  <small>{t.pointsUnit}</small>
+                </div>
+                <div className="podium-sub">{top3.totalAmount.toLocaleString()} {t.paxUnit}</div>
                 <div className="podium-stand bronze-stand">
                   <Award size={18} className="stand-icon" />
                 </div>
@@ -220,14 +228,14 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
                   </div>
 
                   <div className="td-people">
-                    <span className="people-count">{item.totalAmount} {t.paxUnit}</span>
+                    <span className="people-count">{item.totalAmount.toLocaleString()} {t.paxUnit}</span>
                     {item.oppAmount > 0 && (
                       <span className="opp-count-tag">OPP {item.oppAmount}</span>
                     )}
                   </div>
 
                   <div className="td-amount">
-                    <span className="points-num">{item.totalPoints}</span>
+                    <span className="points-num">{item.totalPoints.toLocaleString()}</span>
                     <span className="points-unit">{t.pointsUnit}</span>
                   </div>
                 </div>

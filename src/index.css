@@ -1,6 +1,7 @@
 /* ==========================================================================
    DLSS 人数登记排行榜 - 旗舰极简暖色设计系统 (Warm Minimalist Aesthetic)
    色调：温暖奶油米白 (Warm Cream) + 纯白卡片 + 暖陶土焦糖橙 (Terracotta & Amber)
+   统一按钮色调 | 多语言完美对齐
    ========================================================================== */
 
 :root {
@@ -17,7 +18,7 @@
   --border-medium: #dad1c1;
   --border-focus: #c2410c;
 
-  /* 暖调文字梯度 (浓郁意式咖啡黑 / 暖焦糖深灰) */
+  /* 暖调文字梯度 */
   --text-main: #1c1917;         /* 极深暖灰黑 */
   --text-secondary: #57534e;    /* 暖碳灰 */
   --text-muted: #8c827a;        /* 柔和石灰 */
@@ -35,7 +36,7 @@
   --gold-border: #fde68a;       /* 暖金浅边框 */
   --gold-vivid: #d97706;
 
-  /* OPP 专场活力暖橙 */
+  /* OPP 专场高亮 */
   --flame-primary: #ea580c;
   --flame-light: #fff1ee;
   --flame-border: #ffedd5;
@@ -97,7 +98,7 @@ body {
 }
 
 /* ==========================================================================
-   语言切换器 (Language Switcher) - 暖色胶囊
+   语言切换器 (Language Switcher)
    ========================================================================== */
 
 .language-switcher {
@@ -146,7 +147,7 @@ body {
 }
 
 /* ==========================================================================
-   1. 登录注册页 (LoginPage) - 暖色极简单卡片
+   1. 登录注册页 (LoginPage)
    ========================================================================== */
 
 .login-screen {
@@ -377,7 +378,7 @@ body {
 }
 
 /* ==========================================================================
-   2. 主界面 Header (暖色磨砂半透明顶栏)
+   2. 主界面 Header
    ========================================================================== */
 
 .app-container {
@@ -539,7 +540,7 @@ body {
 }
 
 /* ==========================================================================
-   3. 登记卡片 (SubmitCard) - 暖色自适应结构
+   3. 登记卡片 (SubmitCard) - 统一按钮颜色与自适应结构
    ========================================================================== */
 
 .submit-card {
@@ -567,7 +568,7 @@ body {
   gap: 12px;
 }
 
-/* 渠道双卡选择 (不溢出、不遮挡) */
+/* 渠道双卡选择 */
 .channel-toggle-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -723,7 +724,7 @@ body {
   white-space: nowrap;
 }
 
-/* 积分展示卡片 (暖金琥珀蜜糖色) */
+/* 积分展示卡片 */
 .points-display-card {
   background: var(--gold-light);
   border: 1.5px solid var(--gold-border);
@@ -763,7 +764,7 @@ body {
   color: #92400e;
 }
 
-/* 宽敞大号全宽备注框 (清晰不狭窄) */
+/* 宽敞大号全宽备注框 */
 .note-input-container {
   width: 100%;
 }
@@ -792,7 +793,7 @@ body {
   color: var(--text-muted);
 }
 
-/* 宽敞大号全宽暖色提交按钮 */
+/* 宽敞大号全宽统一暖色提交按钮 (Standard 与 OPP 保持完全一致的优雅暖色) */
 .btn-submit-full {
   width: 100%;
   height: 48px;
@@ -815,15 +816,6 @@ body {
   background: linear-gradient(135deg, #f97316, #ea580c);
   transform: translateY(-1px);
   box-shadow: 0 6px 18px rgba(194, 65, 12, 0.3);
-}
-
-.btn-submit-full.opp {
-  background: linear-gradient(135deg, #d97706, #b45309) !important;
-  box-shadow: 0 4px 14px rgba(217, 119, 6, 0.25) !important;
-}
-
-.btn-submit-full.opp:hover:not(:disabled) {
-  background: linear-gradient(135deg, #f59e0b, #d97706) !important;
 }
 
 .btn-submit-full:disabled {
@@ -855,7 +847,7 @@ body {
 }
 
 /* ==========================================================================
-   4. 极简排行榜 (Leaderboard) - 暖色领奖台与表格
+   4. 极简排行榜 (Leaderboard) - 彻底解决多语言对齐与列宽重叠
    ========================================================================== */
 
 .leaderboard-card {
@@ -970,7 +962,7 @@ body {
   font-size: 1rem;
 }
 
-/* 领奖台 (Top 3 Podium) - 暖金温润台阶 */
+/* 领奖台 (Top 3 Podium) */
 .podium-container {
   display: flex;
   align-items: flex-end;
@@ -1002,7 +994,7 @@ body {
   flex-shrink: 0;
 }
 
-/* 冠军 1st - 暖金蜜糖 */
+/* 冠军 1st */
 .podium-avatar.gold {
   width: 58px;
   height: 58px;
@@ -1012,13 +1004,13 @@ body {
   box-shadow: 0 6px 16px rgba(217, 119, 6, 0.25);
 }
 
-/* 亚军 2nd - 暖银灰 */
+/* 亚军 2nd */
 .podium-avatar.silver {
   background: linear-gradient(135deg, #a8a29e, #78716c);
   color: #ffffff;
 }
 
-/* 季军 3rd - 暖铜色 */
+/* 季军 3rd */
 .podium-avatar.bronze {
   background: linear-gradient(135deg, #d97706, #92400e);
   color: #ffffff;
@@ -1128,7 +1120,7 @@ body {
   background: var(--bg-subtle);
 }
 
-/* 列表表格 */
+/* 列表表格 (给第1列55px，防止多语言重叠) */
 .ranking-table-container {
   border-top: 1px solid var(--border-subtle);
   padding-top: 10px;
@@ -1136,11 +1128,12 @@ body {
 
 .ranking-table-header {
   display: grid;
-  grid-template-columns: 40px 1.5fr 1.2fr 1fr 85px;
+  grid-template-columns: 55px 1.5fr 1.2fr 1fr 85px;
   padding: 6px 12px;
   font-size: 0.74rem;
   font-weight: 700;
   color: var(--text-muted);
+  align-items: center;
 }
 
 .ranking-list {
@@ -1152,7 +1145,7 @@ body {
 
 .ranking-row {
   display: grid;
-  grid-template-columns: 40px 1.5fr 1.2fr 1fr 85px;
+  grid-template-columns: 55px 1.5fr 1.2fr 1fr 85px;
   align-items: center;
   padding: 10px 12px;
   background: var(--bg-subtle);
@@ -1317,7 +1310,7 @@ body {
 }
 
 /* ==========================================================================
-   5. 底部常驻极简战绩栏 (UserStatsBar) - 暖色毛玻璃底栏
+   5. 底部常驻极简战绩栏 (UserStatsBar)
    ========================================================================== */
 
 .user-stats-bar {
@@ -1809,7 +1802,7 @@ body {
   }
 
   .ranking-table-header {
-    grid-template-columns: 35px 1fr 80px;
+    grid-template-columns: 45px 1fr 80px;
   }
 
   .th-progress, .th-people {
@@ -1817,7 +1810,7 @@ body {
   }
 
   .ranking-row {
-    grid-template-columns: 35px 1fr 80px;
+    grid-template-columns: 45px 1fr 80px;
     padding: 8px 10px;
   }
 

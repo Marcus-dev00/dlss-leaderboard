@@ -190,7 +190,7 @@ const translations: Record<Language, Translations> = {
     leaderboardTitle: 'Papan Pendahulu',
 
     loginTab: 'Log Masuk',
-    registerTab: 'Daftar',
+    registerTab: 'Daftar Akaun',
     nameLabel: 'Nama Pekerja',
     namePlaceholder: 'Masukkan nama anda',
     pwdLabel: 'Kata Laluan',
@@ -211,26 +211,26 @@ const translations: Record<Language, Translations> = {
     earnedPoints: 'Mata Diperoleh',
     pointsUnit: 'Mata',
     notePlaceholder: 'Nota (pilihan)',
-    btnSubmit: 'Hantar',
+    btnSubmit: 'Sahkan & Hantar',
     submitSuccess: (amount, points) => `Berjaya daftar ${amount} orang (+${points} mata)`,
     submitFail: 'Penyerahan gagal',
     invalidAmount: 'Sila masukkan bilangan lebih daripada 0',
 
-    tabAll: 'Keseluruhan',
+    tabAll: 'Semua',
     tabMonth: 'Bulanan',
     tabWeek: 'Mingguan',
     totalPointsLabel: 'Jumlah Mata',
     totalPaxLabel: 'Jumlah Orang',
     searchPlaceholder: 'Cari nama...',
     noData: 'Tiada rekod data',
-    rankTh: 'Kedudukan',
+    rankTh: 'Ked.',
     employeeTh: 'Pekerja',
     progressTh: 'Kemajuan',
     paxTh: 'Orang',
     pointsTh: 'Mata',
     meTag: 'Saya',
 
-    myRankLabel: 'Kedudukan',
+    myRankLabel: 'Ked.',
     myPointsLabel: 'Mata',
     myPaxLabel: 'Orang',
     btnRecord: 'Daftar',
@@ -252,7 +252,6 @@ interface LanguageContextType {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined)
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // 默认英文，如果 localStorage 有存储则优先读取
   const [language, setLanguageState] = useState<Language>(() => {
     const saved = localStorage.getItem('dlss_lang')
     if (saved === 'zh' || saved === 'en' || saved === 'ms') {

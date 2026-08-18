@@ -1,7 +1,7 @@
 /* ==========================================================================
    DLSS 人数登记排行榜 - 旗舰极简暖色设计系统 (Warm Minimalist Aesthetic)
    色调：温暖奶油米白 (Warm Cream) + 纯白卡片 + 暖陶土焦糖橙 (Terracotta & Amber)
-   统一按钮色调 | 多语言完美对齐
+   统一按钮色调 | 多语言完美对齐 | 灵动岛悬浮底栏
    ========================================================================== */
 
 :root {
@@ -540,7 +540,7 @@ body {
 }
 
 /* ==========================================================================
-   3. 登记卡片 (SubmitCard) - 统一按钮颜色与自适应结构
+   3. 登记卡片 (SubmitCard)
    ========================================================================== */
 
 .submit-card {
@@ -793,7 +793,7 @@ body {
   color: var(--text-muted);
 }
 
-/* 宽敞大号全宽统一暖色提交按钮 (Standard 与 OPP 保持完全一致的优雅暖色) */
+/* 宽敞大号全宽统一暖色提交按钮 */
 .btn-submit-full {
   width: 100%;
   height: 48px;
@@ -847,7 +847,7 @@ body {
 }
 
 /* ==========================================================================
-   4. 极简排行榜 (Leaderboard) - 彻底解决多语言对齐与列宽重叠
+   4. 极简排行榜 (Leaderboard)
    ========================================================================== */
 
 .leaderboard-card {
@@ -1120,7 +1120,7 @@ body {
   background: var(--bg-subtle);
 }
 
-/* 列表表格 (给第1列55px，防止多语言重叠) */
+/* 列表表格 */
 .ranking-table-container {
   border-top: 1px solid var(--border-subtle);
   padding-top: 10px;
@@ -1310,104 +1310,138 @@ body {
 }
 
 /* ==========================================================================
-   5. 底部常驻极简战绩栏 (UserStatsBar)
+   5. 底部悬浮灵动岛战绩栏 (UserStats Floating Island Capsule)
    ========================================================================== */
 
-.user-stats-bar {
+.user-stats-floating-island {
   position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: rgba(255, 255, 255, 0.94);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-top: 1px solid var(--border-medium);
-  box-shadow: 0 -2px 10px rgba(60, 45, 30, 0.05);
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 30;
-  padding-bottom: env(safe-area-inset-bottom, 0);
+  width: auto;
+  max-width: calc(100% - 24px);
+  animation: islandPop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.user-stats-container {
-  max-width: 860px;
-  margin: 0 auto;
-  padding: 8px 14px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
+@keyframes islandPop {
+  from { opacity: 0; transform: translate(-50%, 12px) scale(0.95); }
+  to { opacity: 1; transform: translate(-50%, 0) scale(1); }
 }
 
-.user-stats-left {
+.user-stats-island-inner {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1.5px solid rgba(218, 209, 193, 0.85);
+  border-radius: var(--radius-full);
+  box-shadow: 0 10px 30px -4px rgba(60, 45, 30, 0.14), 0 2px 8px rgba(60, 45, 30, 0.05);
+  padding: 6px 8px 6px 12px;
   display: flex;
   align-items: center;
-  gap: 8px;
-  min-width: 0;
-  flex: 1;
-}
-
-.user-stats-user-pill {
-  display: flex;
-  align-items: center;
-  gap: 5px;
+  gap: 10px;
   white-space: nowrap;
+}
+
+.island-user-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   flex-shrink: 0;
 }
 
-.user-avatar-mini {
-  width: 22px;
-  height: 22px;
+.island-avatar {
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   background: linear-gradient(135deg, #ea580c, #c2410c);
   color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.72rem;
-  font-weight: 700;
+  font-size: 0.75rem;
+  font-weight: 800;
+  box-shadow: 0 1px 4px rgba(194, 65, 12, 0.2);
 }
 
-.user-stats-name {
+.island-name {
   font-weight: 800;
-  font-size: 0.85rem;
+  font-size: 0.86rem;
   color: var(--text-main);
-  max-width: 75px;
+  max-width: 90px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.user-stats-metrics-group {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  white-space: nowrap;
+.island-divider {
+  width: 1px;
+  height: 16px;
+  background: var(--border-medium);
+  flex-shrink: 0;
 }
 
-.stats-tag {
+.island-metrics-row {
   display: flex;
   align-items: center;
-  gap: 3px;
+  gap: 6px;
+  flex-shrink: 1;
+  min-width: 0;
+}
+
+.island-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
   font-size: 0.8rem;
-  color: var(--text-secondary);
+  font-weight: 700;
   white-space: nowrap;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-subtle);
 }
 
-.stats-tag-label {
-  color: var(--text-muted);
-  font-size: 0.74rem;
+.island-badge.rank {
+  background: #fffbeb;
+  border-color: #fef3c7;
+  color: #92400e;
 }
 
-.stats-tag-val strong {
-  color: var(--text-main);
-  font-weight: 800;
+.island-badge.points {
+  background: #fff7ed;
+  border-color: #ffedd5;
+  color: #c2410c;
+}
+
+.island-badge.pax {
+  background: var(--bg-subtle);
+  border-color: var(--border-subtle);
+  color: var(--text-secondary);
+}
+
+.island-icon {
+  flex-shrink: 0;
+}
+
+.island-icon.gold { color: #d97706; }
+.island-icon.amber { color: #ea580c; }
+.island-icon.stone { color: var(--text-muted); }
+
+.island-badge-val {
   font-variant-numeric: tabular-nums;
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
 }
 
-.text-gold {
-  color: #b45309 !important;
+.island-badge-val small {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--text-muted);
 }
 
-.btn-stats-submit {
+.island-btn-record {
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -1415,19 +1449,20 @@ body {
   color: #ffffff;
   border: none;
   border-radius: var(--radius-full);
-  padding: 7px 14px;
+  padding: 6px 14px;
   font-size: 0.82rem;
   font-weight: 700;
   cursor: pointer;
   white-space: nowrap;
   flex-shrink: 0;
-  box-shadow: 0 2px 8px rgba(194, 65, 12, 0.2);
+  box-shadow: 0 2px 8px rgba(194, 65, 12, 0.25);
   transition: var(--transition);
 }
 
-.btn-stats-submit:hover {
+.island-btn-record:hover {
   background: linear-gradient(135deg, #f97316, #ea580c);
   transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(194, 65, 12, 0.35);
 }
 
 /* ==========================================================================
@@ -1818,30 +1853,37 @@ body {
     display: none;
   }
 
-  /* 移动端底栏 */
-  .user-stats-container {
-    padding: 6px 12px;
+  /* 灵动岛移动端 */
+  .user-stats-floating-island {
+    bottom: calc(10px + env(safe-area-inset-bottom, 0));
+    width: calc(100% - 16px);
   }
 
-  .user-stats-name {
+  .user-stats-island-inner {
+    padding: 4px 5px 4px 8px;
+    gap: 5px;
+    justify-content: space-between;
+  }
+
+  .island-name {
     max-width: 60px;
-    font-size: 0.8rem;
+    font-size: 0.78rem;
   }
 
-  .user-stats-metrics-group {
-    gap: 6px;
-  }
-
-  .stats-tag {
-    font-size: 0.75rem;
-  }
-
-  .stats-tag-label {
+  .island-avatar {
+    width: 20px;
+    height: 20px;
     font-size: 0.7rem;
   }
 
-  .btn-stats-submit {
-    padding: 6px 12px;
-    font-size: 0.78rem;
+  .island-badge {
+    padding: 2px 6px;
+    font-size: 0.74rem;
+    gap: 3px;
+  }
+
+  .island-btn-record {
+    padding: 5px 10px;
+    font-size: 0.76rem;
   }
 }

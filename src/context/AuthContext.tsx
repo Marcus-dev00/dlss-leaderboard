@@ -1,168 +1,170 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
-import { User } from '@supabase/supabase-js'
-import { supabase, nameToInternalEmail } from '../lib/supabase'
+import { supabase } from '../lib/supabase'
 import { Profile } from '../types'
 
 interface AuthContextType {
-  user: User | null
+  user: { id: string } | null
   profile: Profile | null
   loading: boolean
-  login: (name: string, password: string) => Promise<{ success: boolean; error?: string; isNewUser?: boolean }>
+  login: (name: string, password: string) => Promise<{ success: boolean; error?: string }>
   logout: () => Promise<void>
   refreshProfile: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
+const STORAGE_KEY = 'dlss_current_user_profile'
+
+/**
+ * 使用浏览器原生 SHA-256 进行密码哈希，确保安全存储
+ */
+async function hashPassword(password: string): Promise<string> {
+  const encoder = new TextEncoder()
+  const data = encoder.encode(password + '_dlss_salt_sec')
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data)
+  const hashArray = Array.from(new Uint8Array(hashBuffer))
+  return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('')
+}
+
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null)
   const [profile, setProfile] = useState<Profile | null>(null)
   const [loading, setLoading] = useState<boolean>(true)
 
-  const fetchProfile = async (userId: string, defaultName?: string) => {
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .maybeSingle()
-
-      if (error) {
-        console.error('Fetch profile error:', error)
-      }
-
-      if (data) {
-        setProfile(data as Profile)
-      } else if (defaultName) {
-        // 如果 profile 尚未创建，补充创建
-        const { data: newProfile, error: insertError } = await supabase
-          .from('profiles')
-          .upsert({ id: userId, name: defaultName.trim() })
-          .select()
-          .single()
-
-        if (!insertError && newProfile) {
-          setProfile(newProfile as Profile)
-        }
-      }
-    } catch (err) {
-      console.error('Error fetching profile:', err)
-    }
-  }
-
   useEffect(() => {
-    // 检查初始会话
-    const initializeAuth = async () => {
+    // 从 localStorage 恢复会话并校验数据库
+    const restoreSession = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession()
-        if (session?.user) {
-          setUser(session.user)
-          await fetchProfile(session.user.id)
+        const saved = localStorage.getItem(STORAGE_KEY)
+        if (saved) {
+          const parsed = JSON.parse(saved) as Profile
+          if (parsed && parsed.id) {
+            // 从数据库拉取最新 profile
+            const { data, error } = await supabase
+              .from('profiles')
+              .select('*')
+              .eq('id', parsed.id)
+              .maybeSingle()
+
+            if (!error && data) {
+              setProfile(data as Profile)
+            } else {
+              setProfile(parsed)
+            }
+          }
         }
       } catch (e) {
-        console.error('Session init error:', e)
+        console.error('Session restore error:', e)
       } finally {
         setLoading(false)
       }
     }
 
-    initializeAuth()
-
-    // 监听认证状态变更
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      if (session?.user) {
-        setUser(session.user)
-        await fetchProfile(session.user.id)
-      } else {
-        setUser(null)
-        setProfile(null)
-      }
-      setLoading(false)
-    })
-
-    return () => {
-      subscription.unsubscribe()
-    }
+    restoreSession()
   }, [])
 
   const login = async (name: string, password: string) => {
     const trimmedName = name.trim()
     if (!trimmedName) {
-      return { success: false, error: '请输入姓名' }
+      return { success: false, error: '请输入员工姓名' }
     }
     if (!password || password.length < 6) {
       return { success: false, error: '密码长度至少为 6 位' }
     }
 
-    const email = nameToInternalEmail(trimmedName)
-
     try {
-      // 1. 尝试直接登录
-      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
-        email,
-        password
-      })
+      const pwdHash = await hashPassword(password)
 
-      if (!signInError && signInData.user) {
-        setUser(signInData.user)
-        await fetchProfile(signInData.user.id, trimmedName)
-        return { success: true, isNewUser: false }
+      // 1. 查询 profiles 表中该姓名是否已存在
+      const { data: existingUser, error: queryError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('name', trimmedName)
+        .maybeSingle()
+
+      if (queryError) {
+        console.error('Query profile error:', queryError)
+        return { success: false, error: `查询失败: ${queryError.message}` }
       }
 
-      // 2. 如果登录失败，判断是否需要自动注册
-      if (signInError) {
-        const msg = signInError.message.toLowerCase()
-        const isCredentialsError = msg.includes('invalid login credentials') || msg.includes('user not found')
-
-        if (isCredentialsError) {
-          // 尝试注册
-          const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-            email,
-            password,
-            options: {
-              data: { name: trimmedName }
-            }
-          })
-
-          if (signUpError) {
-            // 如果注册提示用户已存在，说明是密码输错了
-            if (signUpError.message.includes('User already registered') || signUpError.message.includes('already exists')) {
-              return { success: false, error: '该姓名已注册，但密码错误，请核对密码！' }
-            }
-            return { success: false, error: signUpError.message }
-          }
-
-          if (signUpData.user) {
-            setUser(signUpData.user)
-            // 创建 profile 记录
-            await fetchProfile(signUpData.user.id, trimmedName)
-            return { success: true, isNewUser: true }
-          }
+      // 2. 如果员工已存在 -> 验证密码
+      if (existingUser) {
+        if (existingUser.password_hash && existingUser.password_hash !== pwdHash) {
+          return { success: false, error: '该姓名已存在，但密码不匹配，请重新输入！' }
         }
 
-        return { success: false, error: signInError.message }
+        // 如果旧账号还没有 password_hash，则更新保存当前密码
+        if (!existingUser.password_hash) {
+          await supabase
+            .from('profiles')
+            .update({ password_hash: pwdHash })
+            .eq('id', existingUser.id)
+        }
+
+        const validProfile = existingUser as Profile
+        setProfile(validProfile)
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(validProfile))
+        return { success: true }
       }
 
-      return { success: false, error: '登录失败，请稍后重试' }
+      // 3. 如果员工不存在 -> 自动创建新员工档案（注册）
+      const { data: newProfile, error: insertError } = await supabase
+        .from('profiles')
+        .insert({
+          name: trimmedName,
+          password_hash: pwdHash
+        })
+        .select()
+        .single()
+
+      if (insertError) {
+        console.error('Insert profile error:', insertError)
+        return { success: false, error: `创建档案失败: ${insertError.message}` }
+      }
+
+      if (newProfile) {
+        const createdProfile = newProfile as Profile
+        setProfile(createdProfile)
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(createdProfile))
+        return { success: true }
+      }
+
+      return { success: false, error: '注册失败，请稍后重试' }
     } catch (err: any) {
       return { success: false, error: err?.message || '网络连接异常' }
     }
   }
 
   const logout = async () => {
-    await supabase.auth.signOut()
-    setUser(null)
+    localStorage.removeItem(STORAGE_KEY)
     setProfile(null)
   }
 
   const refreshProfile = async () => {
-    if (user) {
-      await fetchProfile(user.id)
+    if (profile) {
+      const { data } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', profile.id)
+        .maybeSingle()
+
+      if (data) {
+        setProfile(data as Profile)
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
+      }
     }
   }
 
   return (
-    <AuthContext.Provider value={{ user, profile, loading, login, logout, refreshProfile }}>
+    <AuthContext.Provider
+      value={{
+        user: profile ? { id: profile.id } : null,
+        profile,
+        loading,
+        login,
+        logout,
+        refreshProfile
+      }}
+    >
       {children}
     </AuthContext.Provider>
   )

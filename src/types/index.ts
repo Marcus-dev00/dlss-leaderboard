@@ -1,6 +1,7 @@
 export interface Profile {
   id: string
   name: string
+  password_hash?: string | null
   created_at: string
 }
 
